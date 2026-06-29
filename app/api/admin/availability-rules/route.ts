@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
 import { getServerSession } from "next-auth"
-import { Prisma } from "@prisma/client"
 import { authOptions } from "@/lib/auth"
 import { prisma } from "@/lib/prisma"
 
@@ -23,7 +22,8 @@ export async function PUT(request: NextRequest) {
   const body = await request.json()
   const { rules } = body
 
-  await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  await prisma.$transaction(async (tx: any) => {
     await tx.availability.deleteMany({
       where: { establishmentId: session.user.establishmentId },
     })
