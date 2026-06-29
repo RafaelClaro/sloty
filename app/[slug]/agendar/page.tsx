@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useState, useCallback } from "react"
+import { useEffect, useState, useCallback, Suspense } from "react"
 import { useRouter, useSearchParams, useParams } from "next/navigation"
 import { Button } from "@/components/ui/Button"
 import { ProgressBar } from "@/components/booking/ProgressBar"
@@ -10,7 +10,7 @@ const MONTHS = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","A
 
 interface Slot { time: string; available: boolean }
 
-export default function AgendarPage() {
+function AgendarContent() {
   const router = useRouter()
   const params = useParams()
   const searchParams = useSearchParams()
@@ -175,5 +175,13 @@ export default function AgendarPage() {
         </Button>
       </div>
     </>
+  )
+}
+
+export default function AgendarPage() {
+  return (
+    <Suspense>
+      <AgendarContent />
+    </Suspense>
   )
 }

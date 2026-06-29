@@ -1,12 +1,12 @@
 "use client"
 
-import { useState } from "react"
+import { useState, Suspense } from "react"
 import { useRouter, useSearchParams, useParams } from "next/navigation"
 import { Button } from "@/components/ui/Button"
 import { Input } from "@/components/ui/Input"
 import { ProgressBar } from "@/components/booking/ProgressBar"
 
-export default function ConfirmarPage() {
+function ConfirmarContent() {
   const router = useRouter()
   const params = useParams()
   const searchParams = useSearchParams()
@@ -133,5 +133,13 @@ export default function ConfirmarPage() {
         🔒 Seus dados são usados apenas para confirmar seu agendamento.
       </p>
     </>
+  )
+}
+
+export default function ConfirmarPage() {
+  return (
+    <Suspense>
+      <ConfirmarContent />
+    </Suspense>
   )
 }
