@@ -1,4 +1,3 @@
-﻿System.Management.Automation.RemoteException
 -- CreateSchema
 CREATE SCHEMA IF NOT EXISTS "public";
 
