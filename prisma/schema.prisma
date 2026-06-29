@@ -1,0 +1,89 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Establishment {
+  id          String   @id @default(cuid())
+  slug        String   @unique
+  name        String
+  description String?
+  phone       String?
+  timezone    String   @default("America/Sao_Paulo")
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  services        Service[]
+  availability    Availability[]
+  bookings        Booking[]
+  blockedTimes    BlockedTime[]
+  adminUser       User?
+}
+
+model Service {
+  id              String   @id @default(cuid())
+  establishmentId String
+  name            String
+  durationMinutes Int
+  price           Float
+  description     String?
+  active          Boolean  @default(true)
+  createdAt       DateTime @default(now())
+
+  establishment Establishment @relation(fields: [establishmentId], references: [id], onDelete: Cascade)
+  bookings      Booking[]
+}
+
+model Availability {
+  id              String  @id @default(cuid())
+  establishmentId String
+  dayOfWeek       Int
+  startTime       String
+  endTime         String
+  active          Boolean @default(true)
+
+  establishment Establishment @relation(fields: [establishmentId], references: [id], onDelete: Cascade)
+}
+
+model Booking {
+  id              String        @id @default(cuid())
+  establishmentId String
+  serviceId       String
+  clientName      String
+  clientPhone     String
+  startTime       DateTime
+  endTime         DateTime
+  cancelToken     String        @unique
+  status          BookingStatus @default(CONFIRMED)
+  createdAt       DateTime      @default(now())
+
+  establishment Establishment @relation(fields: [establishmentId], references: [id], onDelete: Cascade)
+  service       Service       @relation(fields: [serviceId], references: [id])
+}
+
+model BlockedTime {
+  id              String   @id @default(cuid())
+  establishmentId String
+  startTime       DateTime
+  endTime         DateTime
+  reason          String?
+
+  establishment Establishment @relation(fields: [establishmentId], references: [id], onDelete: Cascade)
+}
+
+model User {
+  id              String @id @default(cuid())
+  establishmentId String @unique
+  email           String @unique
+  passwordHash    String
+
+  establishment Establishment @relation(fields: [establishmentId], references: [id], onDelete: Cascade)
+}
+
+enum BookingStatus {
+  CONFIRMED
+  CANCELLED
+}
