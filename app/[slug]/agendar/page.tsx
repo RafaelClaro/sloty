@@ -3,6 +3,7 @@
 import { useEffect, useState, useCallback } from "react"
 import { useRouter, useSearchParams, useParams } from "next/navigation"
 import { Button } from "@/components/ui/Button"
+import { ProgressBar } from "@/components/booking/ProgressBar"
 
 const DAYS = ["D", "S", "T", "Q", "Q", "S", "S"]
 const MONTHS = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"]
@@ -14,6 +15,8 @@ export default function AgendarPage() {
   const params = useParams()
   const searchParams = useSearchParams()
   const serviceId = searchParams.get("serviceId") ?? ""
+  const serviceName = searchParams.get("serviceName") ?? ""
+  const serviceLabel = searchParams.get("serviceLabel") ?? ""
   const slug = params.slug as string
 
   const today = new Date()
@@ -57,7 +60,12 @@ export default function AgendarPage() {
   const handleNext = () => {
     if (!selectedDay || !selectedSlot) return
     const date = `${year}-${String(month + 1).padStart(2, "0")}-${String(selectedDay).padStart(2, "0")}`
-    router.push(`/${slug}/confirmar?serviceId=${serviceId}&date=${date}&time=${selectedSlot}`)
+    const dateLabel = new Date(`${date}T12:00`).toLocaleDateString("pt-BR", {
+      weekday: "short", day: "numeric", month: "short",
+    })
+    router.push(
+      `/${slug}/confirmar?serviceId=${serviceId}&serviceName=${encodeURIComponent(serviceName)}&serviceLabel=${encodeURIComponent(serviceLabel)}&date=${date}&time=${selectedSlot}&dateLabel=${encodeURIComponent(`${dateLabel} · ${selectedSlot}`)}`
+    )
   }
 
   const firstDay = new Date(year, month, 1).getDay()
@@ -66,12 +74,24 @@ export default function AgendarPage() {
 
   return (
     <>
-      <button
-        onClick={() => router.push(`/${slug}`)}
-        className="flex items-center gap-2 text-primary text-sm font-medium pb-3 border-b border-neutral-300"
-      >
-        ← Voltar
-      </button>
+      {/* Barra de progresso */}
+      <ProgressBar step={2} />
+
+      {/* Contexto acumulado */}
+      {serviceName && (
+        <div className="bg-primary-light border border-secondary rounded-md px-3 py-2 flex items-center justify-between">
+          <div>
+            <p className="text-sm font-semibold text-primary-dark">{serviceName}</p>
+            {serviceLabel && <p className="text-xs text-primary mt-0.5">{serviceLabel}</p>}
+          </div>
+          <button
+            onClick={() => router.push(`/${slug}`)}
+            className="text-xs text-primary underline hover:text-primary-dark ml-4 shrink-0"
+          >
+            Trocar
+          </button>
+        </div>
+      )}
 
       <p className="text-xs font-semibold text-neutral-500 uppercase tracking-wide">Escolha uma data</p>
 
@@ -79,12 +99,12 @@ export default function AgendarPage() {
         <div className="flex justify-between items-center px-4 py-3 border-b border-neutral-300">
           <button
             onClick={() => { if (month === 0) { setMonth(11); setYear(y => y - 1) } else setMonth(m => m - 1) }}
-            className="text-neutral-500 text-lg px-2"
+            className="text-neutral-500 text-lg px-2 hover:text-neutral-900"
           >‹</button>
           <span className="text-sm font-semibold text-neutral-900">{MONTHS[month]} {year}</span>
           <button
             onClick={() => { if (month === 11) { setMonth(0); setYear(y => y + 1) } else setMonth(m => m + 1) }}
-            className="text-neutral-500 text-lg px-2"
+            className="text-neutral-500 text-lg px-2 hover:text-neutral-900"
           >›</button>
         </div>
         <div className="grid grid-cols-7 p-2">

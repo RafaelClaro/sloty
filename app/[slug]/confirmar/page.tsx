@@ -4,6 +4,7 @@ import { useState } from "react"
 import { useRouter, useSearchParams, useParams } from "next/navigation"
 import { Button } from "@/components/ui/Button"
 import { Input } from "@/components/ui/Input"
+import { ProgressBar } from "@/components/booking/ProgressBar"
 
 export default function ConfirmarPage() {
   const router = useRouter()
@@ -11,8 +12,11 @@ export default function ConfirmarPage() {
   const searchParams = useSearchParams()
   const slug = params.slug as string
   const serviceId = searchParams.get("serviceId") ?? ""
+  const serviceName = searchParams.get("serviceName") ?? ""
+  const serviceLabel = searchParams.get("serviceLabel") ?? ""
   const date = searchParams.get("date") ?? ""
   const time = searchParams.get("time") ?? ""
+  const dateLabel = searchParams.get("dateLabel") ?? ""
 
   const [name, setName] = useState("")
   const [phone, setPhone] = useState("")
@@ -39,7 +43,6 @@ export default function ConfirmarPage() {
     if (!validate()) return
     setLoading(true)
     setApiError("")
-
     try {
       const startTime = new Date(`${date}T${time}:00`)
       const res = await fetch(`/api/${slug}/bookings`, {
@@ -47,16 +50,12 @@ export default function ConfirmarPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ serviceId, startTime, clientName: name, clientPhone: phone }),
       })
-
       const data = await res.json()
-
-      if (res.status === 409) {
-        setApiError(data.error)
-        return
-      }
+      if (res.status === 409) { setApiError(data.error); return }
       if (!res.ok) throw new Error(data.error)
-
-      router.push(`/${slug}/sucesso?token=${data.cancelToken}&service=${encodeURIComponent(data.serviceName)}&date=${date}&time=${time}`)
+      router.push(
+        `/${slug}/sucesso?token=${data.cancelToken}&service=${encodeURIComponent(data.serviceName)}&date=${date}&time=${time}`
+      )
     } catch {
       setApiError("Erro ao confirmar agendamento. Tente novamente.")
     } finally {
@@ -64,23 +63,39 @@ export default function ConfirmarPage() {
     }
   }
 
-  const dateLabel = new Date(`${date}T12:00`).toLocaleDateString("pt-BR", {
-    weekday: "long", day: "numeric", month: "long",
-  })
-
   return (
     <>
-      <button
-        onClick={() => router.back()}
-        className="flex items-center gap-2 text-primary text-sm font-medium pb-3 border-b border-neutral-300"
-      >
-        ← {dateLabel} às {time}
-      </button>
+      {/* Barra de progresso — tela 3 de 3 */}
+      <ProgressBar step={3} />
 
-      <div className="bg-primary-light border border-secondary rounded-md p-3">
-        <p className="text-xs font-semibold text-primary-dark uppercase tracking-wide">Resumo</p>
-        <p className="text-sm font-medium text-primary-dark mt-1">{dateLabel} às {time}</p>
+      {/* Contexto acumulado — serviço + data/hora */}
+      <div className="bg-primary-light border border-secondary rounded-md px-3 py-2">
+        <div className="flex items-start justify-between">
+          <div className="flex flex-col gap-0.5">
+            <div className="flex items-center gap-2">
+              <span className="text-primary text-xs">✓</span>
+              <p className="text-sm font-semibold text-primary-dark">{serviceName}</p>
+            </div>
+            {serviceLabel && (
+              <p className="text-xs text-primary ml-4">{serviceLabel}</p>
+            )}
+            {dateLabel && (
+              <div className="flex items-center gap-2 mt-1">
+                <span className="text-primary text-xs">✓</span>
+                <p className="text-xs font-medium text-primary-dark">{dateLabel}</p>
+              </div>
+            )}
+          </div>
+          <button
+            onClick={() => router.push(`/${slug}/agendar?serviceId=${serviceId}&serviceName=${encodeURIComponent(serviceName)}&serviceLabel=${encodeURIComponent(serviceLabel)}`)}
+            className="text-xs text-primary underline hover:text-primary-dark ml-4 shrink-0"
+          >
+            Alterar
+          </button>
+        </div>
       </div>
+
+      <p className="text-xs font-semibold text-neutral-500 uppercase tracking-wide">Seus dados</p>
 
       <Input
         label="Nome completo"

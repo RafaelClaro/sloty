@@ -16,14 +16,19 @@ export default async function EstablishmentLayout({
 
   if (!establishment) notFound()
 
+  // Passa dados do estabelecimento via data attributes pra páginas client acessarem
   return (
-    <div className="min-h-screen bg-neutral-50">
+    <div
+      className="min-h-screen bg-neutral-50"
+      data-establishment-name={establishment.name}
+      data-establishment-description={establishment.description ?? ""}
+      data-establishment-slug={establishment.slug}
+    >
       <div className="max-w-md mx-auto">
-        <header className="bg-primary px-4 pt-10 pb-5">
-          <h1 className="text-white text-lg font-bold">{establishment.name}</h1>
-          {establishment.description && (
-            <p className="text-white/75 text-sm mt-1">{establishment.description}</p>
-          )}
+        {/* Header base — cada página injeta contexto via BookingHeader próprio */}
+        <header className="bg-primary px-4 pt-8 pb-4">
+          <h1 className="text-white text-base font-bold">{establishment.name}</h1>
+          <p className="text-white/70 text-xs mt-0.5">{establishment.description}</p>
         </header>
         <main className="px-4 py-5 flex flex-col gap-4">{children}</main>
       </div>
