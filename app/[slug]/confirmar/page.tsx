@@ -124,18 +124,6 @@ function ConfirmarContent() {
         ← {backLabel}
       </button>
 
-      {/* Resumo */}
-      <div className="bg-primary-light rounded-md px-4 py-3 flex flex-col gap-1">
-        <p className="text-xs font-semibold text-primary uppercase tracking-wide mb-1">Resumo</p>
-        <p className="text-sm font-semibold text-neutral-900">
-          {serviceName}{serviceDuration ? ` — ${serviceDuration} min` : ""}
-        </p>
-        <p className="text-sm text-neutral-700">{dateTimeFormatted}</p>
-        {servicePrice && (
-          <p className="text-sm font-semibold text-primary mt-1">{servicePrice}</p>
-        )}
-      </div>
-
       {/* Dados do paciente */}
       <Input
         label="Nome completo"
