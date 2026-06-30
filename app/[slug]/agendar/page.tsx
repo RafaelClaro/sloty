@@ -16,6 +16,8 @@ function AgendarContent() {
   const searchParams = useSearchParams()
   const serviceId = searchParams.get("serviceId") ?? ""
   const serviceName = searchParams.get("serviceName") ?? ""
+  const serviceDuration = searchParams.get("serviceDuration") ?? ""
+  const servicePrice = searchParams.get("servicePrice") ?? ""
   const serviceLabel = searchParams.get("serviceLabel") ?? ""
   const slug = params.slug as string
 
@@ -64,7 +66,7 @@ function AgendarContent() {
       weekday: "short", day: "numeric", month: "short",
     })
     router.push(
-      `/${slug}/confirmar?serviceId=${serviceId}&serviceName=${encodeURIComponent(serviceName)}&serviceLabel=${encodeURIComponent(serviceLabel)}&date=${date}&time=${selectedSlot}&dateLabel=${encodeURIComponent(`${dateLabel} · ${selectedSlot}`)}`
+      `/${slug}/confirmar?serviceId=${serviceId}&serviceName=${encodeURIComponent(serviceName)}&serviceDuration=${serviceDuration}&servicePrice=${encodeURIComponent(servicePrice)}&serviceLabel=${encodeURIComponent(serviceLabel)}&date=${date}&time=${selectedSlot}&dateLabel=${encodeURIComponent(`${dateLabel} · ${selectedSlot}`)}`
     )
   }
 

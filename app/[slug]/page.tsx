@@ -32,7 +32,7 @@ export default async function ServicesPage({ params }: { params: Promise<{ slug:
       {establishment.services.map((service) => (
         <Link
           key={service.id}
-          href={`/${slug}/agendar?serviceId=${service.id}&serviceName=${encodeURIComponent(service.name)}&serviceLabel=${encodeURIComponent(`${service.durationMinutes} min · ${formatCurrency(Number(service.price))}`)}`}
+          href={`/${slug}/agendar?serviceId=${service.id}&serviceName=${encodeURIComponent(service.name)}&serviceDuration=${service.durationMinutes}&servicePrice=${encodeURIComponent(formatCurrency(Number(service.price)))}&serviceLabel=${encodeURIComponent(`${service.durationMinutes} min · ${formatCurrency(Number(service.price))}`)}`}
           className="bg-white border border-neutral-300 rounded-md p-4 shadow-card
                      hover:border-secondary hover:-translate-y-0.5 hover:shadow-elevated
                      active:scale-[0.99] transition-all duration-150 block"
