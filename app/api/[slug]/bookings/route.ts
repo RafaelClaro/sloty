@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { nanoid } from "nanoid"
+import { notifyEstablishmentNewBooking } from "@/lib/email"
 
 export async function POST(
   request: NextRequest,
@@ -61,6 +62,20 @@ export async function POST(
         include: { service: true },
       })
     })
+
+    if (establishment.notifyEmail) {
+      await notifyEstablishmentNewBooking({
+        toEmail: establishment.notifyEmail,
+        establishmentName: establishment.name,
+        clientName: booking.clientName,
+        clientPhone: booking.clientPhone,
+        serviceName: booking.service.name,
+        servicePrice: Number(booking.service.price),
+        startTime: booking.startTime,
+        endTime: booking.endTime,
+        bookingId: booking.id,
+      })
+    }
 
     return NextResponse.json({
       id: booking.id,
