@@ -2,10 +2,6 @@ import { Resend } from "resend"
 import { generateIcsEvent } from "@/lib/ics"
 import { formatCurrency } from "@/lib/utils"
 
-const resend = new Resend(process.env.RESEND_API_KEY)
-
-// Remetente padrão. Domínio próprio é configurável depois — onboarding.resend.dev
-// funciona sem verificação de domínio, ótimo pra MVP.
 const FROM_EMAIL = process.env.RESEND_FROM_EMAIL ?? "Agendamento <onboarding@resend.dev>"
 
 interface NotifyNewBookingParams {
@@ -58,6 +54,7 @@ export async function notifyEstablishmentNewBooking({
   bookingId,
 }: NotifyNewBookingParams) {
   if (!toEmail) return // sem email configurado, não envia
+  const resend = new Resend(process.env.RESEND_API_KEY)
 
   const dateLabel = startTime.toLocaleDateString("pt-BR", {
     weekday: "long", day: "numeric", month: "long",
