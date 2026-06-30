@@ -56,9 +56,11 @@ export async function notifyEstablishmentNewBooking({
   if (!toEmail) return // sem email configurado, não envia
 
   const dateLabel = startTime.toLocaleDateString("pt-BR", {
-    weekday: "long", day: "numeric", month: "long",
+    weekday: "long", day: "numeric", month: "long", timeZone: "America/Sao_Paulo",
   })
-  const timeLabel = startTime.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })
+  const timeLabel = startTime.toLocaleTimeString("pt-BR", {
+    hour: "2-digit", minute: "2-digit", timeZone: "America/Sao_Paulo",
+  })
 
   const eventTitle = `${serviceName} — ${clientName}`
   const eventDescription = `Cliente: ${clientName}\nTelefone: ${clientPhone}\nServiço: ${serviceName}`
