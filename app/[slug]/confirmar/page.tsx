@@ -12,9 +12,10 @@ function ConfirmarContent() {
   const slug = params.slug as string
   const serviceId = searchParams.get("serviceId") ?? ""
   const serviceName = searchParams.get("serviceName") ?? ""
-  const serviceDuration = searchParams.get("serviceDuration") ?? ""
-  const servicePrice = searchParams.get("servicePrice") ?? ""
   const serviceLabel = searchParams.get("serviceLabel") ?? ""
+  // serviceDuration e servicePrice vêm como params diretos ou extraídos do serviceLabel ("60 min · R$ 300,00")
+  const serviceDuration = searchParams.get("serviceDuration") || serviceLabel.match(/^(\d+)\s*min/)?.[1] || ""
+  const servicePrice = searchParams.get("servicePrice") || serviceLabel.split("·")[1]?.trim() || ""
   const date = searchParams.get("date") ?? ""
   const time = searchParams.get("time") ?? ""
   const dateLabel = searchParams.get("dateLabel") ?? ""
