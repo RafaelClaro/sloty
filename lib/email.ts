@@ -54,7 +54,6 @@ export async function notifyEstablishmentNewBooking({
   bookingId,
 }: NotifyNewBookingParams) {
   if (!toEmail) return // sem email configurado, não envia
-  const resend = new Resend(process.env.RESEND_API_KEY)
 
   const dateLabel = startTime.toLocaleDateString("pt-BR", {
     weekday: "long", day: "numeric", month: "long",
@@ -80,6 +79,7 @@ export async function notifyEstablishmentNewBooking({
   })
 
   try {
+    const resend = new Resend(process.env.RESEND_API_KEY)
     await resend.emails.send({
       from: FROM_EMAIL,
       to: toEmail,
