@@ -14,14 +14,20 @@ interface BookingInterval {
  * Gera slots de disponibilidade para um estabelecimento, serviço e data.
  * Remove slots já ocupados por bookings ou bloqueios manuais.
  */
+const TZ = "America/Sao_Paulo"
+
 export async function getAvailableSlots(
   establishmentId: string,
   serviceId: string,
   date: Date
 ): Promise<TimeSlot[]> {
-  const dayOfWeek = date.getDay()
-  const startOfDay = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 0, 0, 0)
-  const endOfDay = new Date(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59, 59)
+  const dayOfWeek = date.getUTCDay()
+  // Cover the full Brasília day in UTC: BRT = UTC-3, so BRT 00:00 = UTC 03:00
+  const y = date.getUTCFullYear()
+  const mo = date.getUTCMonth()
+  const d = date.getUTCDate()
+  const startOfDay = new Date(Date.UTC(y, mo, d, 3, 0, 0))
+  const endOfDay = new Date(Date.UTC(y, mo, d + 1, 2, 59, 59))
 
   const [availability, service, existingBookings, blockedTimes] = await Promise.all([
     prisma.availability.findFirst({
@@ -54,6 +60,8 @@ export async function getAvailableSlots(
     date
   )
 
+  const now = new Date()
+
   return slots.map((slot) => {
     const slotEnd = new Date(slot.getTime() + service.durationMinutes * 60 * 1000)
 
@@ -63,10 +71,11 @@ export async function getAvailableSlots(
     const isBlocked = blockedTimes.some(
       (b: BookingInterval) => slot < b.endTime && slotEnd > b.startTime
     )
+    const isPast = slot <= now
 
     return {
-      time: slot.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" }),
-      available: !isBooked && !isBlocked,
+      time: slot.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit", timeZone: TZ }),
+      available: !isBooked && !isBlocked && !isPast,
     }
   })
 }
@@ -83,11 +92,14 @@ function generateTimeGrid(
   const [startH, startM] = startTime.split(":").map(Number)
   const [endH, endM] = endTime.split(":").map(Number)
 
-  const start = new Date(date)
-  start.setHours(startH, startM, 0, 0)
-
-  const end = new Date(date)
-  end.setHours(endH, endM, 0, 0)
+  // Availability rules store times in Brasília (UTC-3).
+  // Convert to UTC by adding 3 hours so slot Date objects match
+  // bookings which are stored as UTC equivalents of browser local time.
+  const y = date.getUTCFullYear()
+  const mo = date.getUTCMonth()
+  const d = date.getUTCDate()
+  const start = new Date(Date.UTC(y, mo, d, startH + 3, startM))
+  const end = new Date(Date.UTC(y, mo, d, endH + 3, endM))
 
   const slots: Date[] = []
   let current = new Date(start)
