@@ -7,6 +7,7 @@ const items = [
   { href: "/admin/agenda", label: "Agenda", icon: "📅" },
   { href: "/admin/servicos", label: "Serviços", icon: "📋" },
   { href: "/admin/horarios", label: "Horários", icon: "🕐" },
+  { href: "/admin/config", label: "Config", icon: "⚙️" },
 ]
 
 export function BottomNav() {
