@@ -63,8 +63,9 @@ export async function POST(
       })
     })
 
+    // Email em background — nunca derruba o agendamento
     if (establishment.notifyEmail) {
-      await notifyEstablishmentNewBooking({
+      notifyEstablishmentNewBooking({
         toEmail: establishment.notifyEmail,
         establishmentName: establishment.name,
         clientName: booking.clientName,
@@ -74,7 +75,7 @@ export async function POST(
         startTime: booking.startTime,
         endTime: booking.endTime,
         bookingId: booking.id,
-      })
+      }).catch((err) => console.error("[email notify]", err))
     }
 
     return NextResponse.json({
