@@ -126,7 +126,7 @@ export async function notifyEstablishmentNewBooking({
       attachments: [
         {
           filename: "agendamento.ics",
-          content: Buffer.from(ics).toString("base64"),
+          content: Buffer.from(ics.replace(/^﻿/, ""), "utf-8"),
         },
       ],
     })
