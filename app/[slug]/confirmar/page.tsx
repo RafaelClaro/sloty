@@ -4,6 +4,7 @@ import { useState, Suspense } from "react"
 import { useRouter, useSearchParams, useParams } from "next/navigation"
 import { Button } from "@/components/ui/Button"
 import { Input } from "@/components/ui/Input"
+import { ProgressBar } from "@/components/booking/ProgressBar"
 
 function ConfirmarContent() {
   const router = useRouter()
@@ -86,6 +87,33 @@ function ConfirmarContent() {
 
   return (
     <div className="flex flex-col gap-4">
+      <ProgressBar step={3} />
+
+      {/* Contexto acumulado */}
+      <div className="bg-primary-light border border-secondary rounded-md px-3 py-2">
+        <div className="flex items-start justify-between">
+          <div className="flex flex-col gap-1">
+            <div className="flex items-center gap-2">
+              <span className="text-primary text-xs">✓</span>
+              <p className="text-sm font-semibold text-primary-dark">{serviceName}</p>
+            </div>
+            {serviceLabel && <p className="text-xs text-primary ml-4">{serviceLabel}</p>}
+            {dateLabel && (
+              <div className="flex items-center gap-2">
+                <span className="text-primary text-xs">✓</span>
+                <p className="text-xs font-medium text-primary-dark">{dateLabel}</p>
+              </div>
+            )}
+          </div>
+          <button
+            onClick={() => router.push(`/${slug}/agendar?serviceId=${serviceId}&serviceName=${encodeURIComponent(serviceName)}&serviceLabel=${encodeURIComponent(serviceLabel)}`)}
+            className="text-xs text-primary underline hover:text-primary-dark ml-4 shrink-0"
+          >
+            Alterar
+          </button>
+        </div>
+      </div>
+
       {/* Back link com data selecionada */}
       <button
         onClick={() => router.push(

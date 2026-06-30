@@ -5,6 +5,25 @@ import { Button } from "@/components/ui/Button"
 
 const DAYS = ["Domingo","Segunda","Terça","Quarta","Quinta","Sexta","Sábado"]
 
+const TIME_OPTIONS = Array.from({ length: 24 }, (_, h) =>
+  ["00", "30"].map(m => `${String(h).padStart(2, "0")}:${m}`)
+).flat()
+
+function TimeSelect({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+  return (
+    <select
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      className="border border-neutral-300 rounded-md px-2 py-1 text-xs text-neutral-700
+                 bg-white focus:outline-none focus:border-primary w-24"
+    >
+      {TIME_OPTIONS.map((t) => (
+        <option key={t} value={t}>{t}</option>
+      ))}
+    </select>
+  )
+}
+
 interface Rule {
   dayOfWeek: number
   startTime: string
@@ -72,19 +91,9 @@ export default function HorariosPage() {
 
               {rule.active ? (
                 <div className="flex gap-2 flex-1 items-center">
-                  <input
-                    type="time"
-                    value={rule.startTime}
-                    onChange={(e) => update(i, "startTime", e.target.value)}
-                    className="border border-neutral-300 rounded-md px-2 py-1 text-xs text-neutral-700 bg-white focus:outline-none focus:border-primary w-24"
-                  />
+                  <TimeSelect value={rule.startTime} onChange={(v) => update(i, "startTime", v)} />
                   <span className="text-xs text-neutral-500">até</span>
-                  <input
-                    type="time"
-                    value={rule.endTime}
-                    onChange={(e) => update(i, "endTime", e.target.value)}
-                    className="border border-neutral-300 rounded-md px-2 py-1 text-xs text-neutral-700 bg-white focus:outline-none focus:border-primary w-24"
-                  />
+                  <TimeSelect value={rule.endTime} onChange={(v) => update(i, "endTime", v)} />
                 </div>
               ) : (
                 <span className="flex-1 text-xs font-medium text-error">Fechado</span>

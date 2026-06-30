@@ -121,7 +121,7 @@ export default function AgendaPage() {
                     <p className="text-sm font-bold text-primary">{formatTime(b.startTime)}</p>
                     <p className="text-base font-semibold text-neutral-900">{b.clientName}</p>
                     <p className="text-sm text-neutral-500">{b.service.name} • {b.service.durationMinutes} min</p>
-                    <p className="text-sm text-neutral-500 mt-1">📱 {b.clientPhone}</p>
+                    <p className="text-sm text-neutral-500 mt-1"><span className="mr-1">📱</span>{b.clientPhone}</p>
                   </div>
                   <button
                     onClick={() => setConfirmCancel(b.id)}
