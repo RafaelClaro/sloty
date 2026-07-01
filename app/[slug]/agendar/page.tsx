@@ -3,7 +3,6 @@
 import { useEffect, useState, useCallback, Suspense } from "react"
 import { useRouter, useSearchParams, useParams } from "next/navigation"
 import { Button } from "@/components/ui/Button"
-import { ProgressBar } from "@/components/booking/ProgressBar"
 
 const DAYS = ["D", "S", "T", "Q", "Q", "S", "S"]
 const MONTHS = ["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"]
@@ -78,14 +77,14 @@ function AgendarContent() {
     <>
       {/* Contexto acumulado */}
       {serviceName && (
-        <div className="bg-primary-light border border-secondary rounded-md px-3 py-2 flex items-center justify-between">
+        <div className="bg-primary-light border border-secondary rounded-2xl px-4 py-3 flex items-center justify-between">
           <div>
             <p className="text-sm font-semibold text-primary-dark">{serviceName}</p>
             {serviceLabel && <p className="text-xs text-primary mt-0.5">{serviceLabel}</p>}
           </div>
           <button
             onClick={() => router.push(`/${slug}`)}
-            className="text-xs text-primary underline hover:text-primary-dark ml-4 shrink-0"
+            className="text-xs font-semibold text-primary underline hover:text-primary-dark ml-4 shrink-0"
           >
             Trocar
           </button>
@@ -94,16 +93,16 @@ function AgendarContent() {
 
       <p className="text-xs font-semibold text-neutral-500 uppercase tracking-wide">Escolha uma data</p>
 
-      <div className="border border-neutral-300 rounded-md overflow-hidden bg-neutral-100">
-        <div className="flex justify-between items-center px-4 py-3 border-b border-neutral-300">
+      <div className="border border-neutral-300 rounded-2xl overflow-hidden bg-white shadow-card">
+        <div className="flex justify-between items-center px-4 py-3 border-b border-neutral-100 bg-neutral-100">
           <button
             onClick={() => { if (month === 0) { setMonth(11); setYear(y => y - 1) } else setMonth(m => m - 1) }}
-            className="text-neutral-500 text-lg px-2 hover:text-neutral-900"
+            className="w-8 h-8 flex items-center justify-center rounded-full text-neutral-500 hover:bg-white hover:text-primary transition-colors"
           >‹</button>
           <span className="text-sm font-semibold text-neutral-900">{MONTHS[month]} {year}</span>
           <button
             onClick={() => { if (month === 11) { setMonth(0); setYear(y => y + 1) } else setMonth(m => m + 1) }}
-            className="text-neutral-500 text-lg px-2 hover:text-neutral-900"
+            className="w-8 h-8 flex items-center justify-center rounded-full text-neutral-500 hover:bg-white hover:text-primary transition-colors"
           >›</button>
         </div>
         <div className="grid grid-cols-7 p-2">
@@ -118,12 +117,12 @@ function AgendarContent() {
               <div
                 key={i}
                 onClick={() => isAvailable && setSelectedDay(day)}
-                className={`text-center py-2 text-xs mx-0.5 my-0.5 rounded-full transition-colors
+                className={`text-center py-2 text-xs mx-0.5 my-0.5 rounded-full transition-all
                   ${!day ? "invisible" : ""}
-                  ${isSelected ? "bg-primary text-white font-bold" : ""}
+                  ${isSelected ? "bg-primary text-white font-bold shadow-card scale-105" : ""}
                   ${isAvailable && !isSelected ? "text-neutral-900 font-medium cursor-pointer hover:bg-primary-light hover:text-primary" : ""}
                   ${!isAvailable && day ? "text-neutral-300 cursor-default" : ""}
-                  ${isToday && !isSelected ? "text-primary font-bold" : ""}
+                  ${isToday && !isSelected ? "text-primary font-bold ring-1 ring-primary/40" : ""}
                 `}
               >
                 {day ?? ""}
@@ -138,7 +137,7 @@ function AgendarContent() {
           <p className="text-xs font-semibold text-neutral-500 uppercase tracking-wide">Horários disponíveis</p>
           {loadingSlots ? (
             <div className="flex gap-2 flex-wrap">
-              {[1,2,3,4,5,6].map(i => <div key={i} className="h-8 w-16 rounded-md bg-neutral-200 animate-pulse" />)}
+              {[1,2,3,4,5,6].map(i => <div key={i} className="h-9 w-16 rounded-full bg-neutral-200 animate-pulse" />)}
             </div>
           ) : slots.length === 0 ? (
             <p className="text-sm text-neutral-500">Nenhum horário disponível para este dia.</p>
@@ -149,8 +148,8 @@ function AgendarContent() {
                   key={slot.time}
                   disabled={!slot.available}
                   onClick={() => setSelectedSlot(slot.time)}
-                  className={`px-4 py-2 rounded-md text-sm font-medium border transition-all
-                    ${selectedSlot === slot.time ? "bg-primary text-white border-primary" : ""}
+                  className={`px-4 py-2 rounded-full text-sm font-medium border transition-all
+                    ${selectedSlot === slot.time ? "bg-primary text-white border-primary shadow-card" : ""}
                     ${slot.available && selectedSlot !== slot.time ? "bg-white text-neutral-700 border-neutral-300 hover:border-primary hover:text-primary" : ""}
                     ${!slot.available ? "opacity-40 cursor-not-allowed bg-neutral-100 text-neutral-300 border-neutral-100" : ""}
                   `}

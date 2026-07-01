@@ -22,21 +22,24 @@ export default async function SucessoPage({
 
   return (
     <div className="flex flex-col items-center text-center gap-4 py-8">
-      <div className="w-14 h-14 bg-primary-light rounded-full flex items-center justify-center">
+      <div className="w-16 h-16 bg-primary-light rounded-full flex items-center justify-center shadow-card">
         <span className="text-primary text-3xl">✓</span>
       </div>
 
-      <h2 className="text-xl font-bold text-neutral-900">Consulta agendada!</h2>
-
-      <div className="text-neutral-700 text-sm leading-relaxed">
-        <p className="font-medium">{decodeURIComponent(service)}</p>
-        <p>{dateLabel} às {time}</p>
+      <div>
+        <h2 className="text-xl font-bold text-neutral-900">Consulta agendada!</h2>
+        <p className="text-sm text-neutral-500 mt-1">Você vai receber a confirmação em breve</p>
       </div>
 
-      <div className="flex flex-col items-center gap-1 bg-neutral-100 border border-neutral-300
-                      rounded-md py-3 px-6 w-full">
+      <div className="text-neutral-700 text-sm leading-relaxed bg-white border border-neutral-300 rounded-2xl shadow-card px-5 py-4 w-full">
+        <p className="font-bold text-neutral-900">{decodeURIComponent(service)}</p>
+        <p className="mt-1">{dateLabel} às {time}</p>
+      </div>
+
+      <div className="flex flex-col items-center gap-1 bg-gradient-to-b from-neutral-100 to-white border border-neutral-300
+                      rounded-2xl py-4 px-6 w-full shadow-card">
         <p className="text-xs text-neutral-500">Código para cancelar</p>
-        <p className="text-xl font-bold text-neutral-900 tracking-widest">{token}</p>
+        <p className="text-2xl font-bold text-primary tracking-[0.2em]">{token}</p>
         <p className="text-xs text-neutral-500">Guarde este código se precisar cancelar</p>
       </div>
 
@@ -45,13 +48,13 @@ export default async function SucessoPage({
           href={calUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="w-full border border-primary text-primary rounded-lg py-3 text-sm
-                     font-medium text-center hover:bg-primary-light transition-colors"
+          className="w-full border border-primary text-primary rounded-2xl py-3 text-sm
+                     font-semibold text-center hover:bg-primary-light active:scale-[0.98] transition-all"
         >
           📅 Adicionar ao Google Calendar
         </a>
 
-        <Link href={`/${slug}/cancelar`} className="text-sm text-error text-center">
+        <Link href={`/${slug}/cancelar`} className="text-sm text-error text-center font-medium">
           Cancelar este agendamento
         </Link>
 

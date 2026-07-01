@@ -4,7 +4,6 @@ import { useState, Suspense } from "react"
 import { useRouter, useSearchParams, useParams } from "next/navigation"
 import { Button } from "@/components/ui/Button"
 import { Input } from "@/components/ui/Input"
-import { ProgressBar } from "@/components/booking/ProgressBar"
 
 function ConfirmarContent() {
   const router = useRouter()
@@ -87,27 +86,25 @@ function ConfirmarContent() {
 
   return (
     <div className="flex flex-col gap-4">
-      <ProgressBar step={3} />
-
       {/* Contexto acumulado */}
-      <div className="bg-primary-light border border-secondary rounded-md px-3 py-2">
+      <div className="bg-primary-light border border-secondary rounded-2xl px-4 py-3">
         <div className="flex items-start justify-between">
           <div className="flex flex-col gap-1">
             <div className="flex items-center gap-2">
-              <span className="text-primary text-xs">✓</span>
+              <span className="w-4 h-4 rounded-full bg-primary text-white text-[10px] flex items-center justify-center shrink-0">✓</span>
               <p className="text-sm font-semibold text-primary-dark">{serviceName}</p>
             </div>
-            {serviceLabel && <p className="text-xs text-primary ml-4">{serviceLabel}</p>}
+            {serviceLabel && <p className="text-xs text-primary ml-6">{serviceLabel}</p>}
             {dateLabel && (
               <div className="flex items-center gap-2">
-                <span className="text-primary text-xs">✓</span>
+                <span className="w-4 h-4 rounded-full bg-primary text-white text-[10px] flex items-center justify-center shrink-0">✓</span>
                 <p className="text-xs font-medium text-primary-dark">{dateLabel}</p>
               </div>
             )}
           </div>
           <button
             onClick={() => router.push(`/${slug}/agendar?serviceId=${serviceId}&serviceName=${encodeURIComponent(serviceName)}&serviceLabel=${encodeURIComponent(serviceLabel)}`)}
-            className="text-xs text-primary underline hover:text-primary-dark ml-4 shrink-0"
+            className="text-xs font-semibold text-primary underline hover:text-primary-dark ml-4 shrink-0"
           >
             Alterar
           </button>
@@ -143,7 +140,7 @@ function ConfirmarContent() {
       />
 
       {apiError && (
-        <div className="bg-error-light border border-error rounded-md p-3">
+        <div className="bg-error-light border border-error rounded-2xl p-3">
           <p className="text-sm text-error">{apiError}</p>
           {apiError.includes("horário") && (
             <button onClick={() => router.back()} className="text-sm text-error underline mt-1">
