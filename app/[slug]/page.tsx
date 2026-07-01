@@ -25,7 +25,6 @@ export default async function ServicesPage({ params }: { params: Promise<{ slug:
 
   return (
     <>
-      <ProgressBar step={1} />
       <p className="text-xs font-semibold text-neutral-500 uppercase tracking-wide">
         Escolha o serviço
       </p>

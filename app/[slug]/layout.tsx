@@ -26,7 +26,7 @@ export default async function EstablishmentLayout({
     >
       <div className="max-w-md mx-auto">
         {/* Header base — cada página injeta contexto via BookingHeader próprio */}
-        <header className="bg-primary px-4 pt-8 pb-4">
+        <header className="bg-primary px-4 pt-8 pb-6 rounded-b-3xl">
           <h1 className="text-white text-base font-bold">{establishment.name}</h1>
           <p className="text-white/70 text-xs mt-0.5">{establishment.description}</p>
         </header>
