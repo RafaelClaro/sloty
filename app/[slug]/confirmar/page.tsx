@@ -32,13 +32,6 @@ function ConfirmarContent() {
     ? `${dateFormatted.charAt(0).toUpperCase() + dateFormatted.slice(1)} às ${time}`
     : dateLabel
 
-  // Label curta para o back link: "Qua, 9 Jul • 15:00"
-  const backLabel = date
-    ? `${new Date(`${date}T12:00`).toLocaleDateString("pt-BR", {
-        weekday: "short", day: "numeric", month: "short",
-      })} • ${time}`
-    : dateLabel
-
   const [name, setName] = useState("")
   const [phone, setPhone] = useState("")
   const [errors, setErrors] = useState<{ name?: string; phone?: string }>({})
@@ -104,16 +97,6 @@ function ConfirmarContent() {
           </button>
         </div>
       </div>
-
-      {/* Back link com data selecionada */}
-      <button
-        onClick={() => router.push(
-          `/${slug}/agendar?serviceId=${serviceId}&serviceName=${encodeURIComponent(serviceName)}&serviceDuration=${serviceDuration}&servicePrice=${encodeURIComponent(servicePrice)}&serviceLabel=${encodeURIComponent(serviceLabel)}`
-        )}
-        className="flex items-center gap-1 text-sm text-neutral-500 hover:text-neutral-700 self-start"
-      >
-        ← {backLabel}
-      </button>
 
       {/* Dados do paciente */}
       <Input
