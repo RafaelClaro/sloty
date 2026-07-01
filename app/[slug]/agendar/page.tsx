@@ -76,9 +76,6 @@ function AgendarContent() {
 
   return (
     <>
-      {/* Barra de progresso */}
-      <ProgressBar step={2} />
-
       {/* Contexto acumulado */}
       {serviceName && (
         <div className="bg-primary-light border border-secondary rounded-md px-3 py-2 flex items-center justify-between">
