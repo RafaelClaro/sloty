@@ -20,7 +20,7 @@ export default async function EstablishmentLayout({
   // Passa dados do estabelecimento via data attributes pra páginas client acessarem
   return (
     <div
-      className="min-h-screen bg-neutral-100"
+      className="min-h-dvh bg-neutral-100"
       data-establishment-name={establishment.name}
       data-establishment-description={establishment.description ?? ""}
       data-establishment-slug={establishment.slug}
@@ -28,7 +28,7 @@ export default async function EstablishmentLayout({
       <ScrollToTop />
       <div className="max-w-md mx-auto">
         {/* Header base — cada página injeta contexto via BookingHeader próprio */}
-        <div className="sticky top-0 z-10 px-4 pt-4 pb-2 bg-neutral-100">
+        <div className="px-4 pt-6">
           <header
             className="relative overflow-hidden rounded-3xl px-5 py-6 shadow-elevated"
             style={{ background: "linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%)" }}
@@ -46,7 +46,7 @@ export default async function EstablishmentLayout({
             </div>
           </header>
         </div>
-        <main className="px-4 pb-5 flex flex-col gap-4">{children}</main>
+        <main className="px-4 py-5 flex flex-col gap-4">{children}</main>
       </div>
     </div>
   )
