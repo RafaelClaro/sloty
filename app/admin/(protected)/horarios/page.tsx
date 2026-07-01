@@ -86,25 +86,26 @@ export default function HorariosPage() {
       ) : (
         <div className="bg-neutral-100 border border-neutral-300 rounded-md divide-y divide-neutral-300">
           {rules.map((rule, i) => (
-            <div key={i} className="flex items-center gap-3 px-4 py-3">
-              <span className="text-sm font-medium text-neutral-900 w-20 shrink-0">{DAYS[rule.dayOfWeek]}</span>
+            <div key={i} className="flex flex-col gap-2 px-4 py-3">
+              <div className="flex items-center justify-between">
+                <span className="text-sm font-medium text-neutral-900">{DAYS[rule.dayOfWeek]}</span>
+                <button
+                  onClick={() => update(i, "active", !rule.active)}
+                  className={`w-10 h-5 rounded-full relative transition-colors shrink-0 ${rule.active ? "bg-primary" : "bg-neutral-300"}`}
+                >
+                  <div className={`absolute w-4 h-4 bg-white rounded-full top-0.5 transition-all ${rule.active ? "right-0.5" : "left-0.5"}`} />
+                </button>
+              </div>
 
               {rule.active ? (
-                <div className="flex gap-2 flex-1 items-center">
+                <div className="flex gap-2 items-center">
                   <TimeSelect value={rule.startTime} onChange={(v) => update(i, "startTime", v)} />
                   <span className="text-xs text-neutral-500">até</span>
                   <TimeSelect value={rule.endTime} onChange={(v) => update(i, "endTime", v)} />
                 </div>
               ) : (
-                <span className="flex-1 text-xs font-medium text-error">Fechado</span>
+                <span className="text-xs font-medium text-error">Fechado</span>
               )}
-
-              <button
-                onClick={() => update(i, "active", !rule.active)}
-                className={`w-10 h-5 rounded-full relative transition-colors shrink-0 ${rule.active ? "bg-primary" : "bg-neutral-300"}`}
-              >
-                <div className={`absolute w-4 h-4 bg-white rounded-full top-0.5 transition-all ${rule.active ? "right-0.5" : "left-0.5"}`} />
-              </button>
             </div>
           ))}
         </div>
