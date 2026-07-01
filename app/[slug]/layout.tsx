@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma"
 import { notFound } from "next/navigation"
 import { ReactNode } from "react"
+import { ScrollToTop } from "./ScrollToTop"
 
 export default async function EstablishmentLayout({
   children,
@@ -24,6 +25,7 @@ export default async function EstablishmentLayout({
       data-establishment-description={establishment.description ?? ""}
       data-establishment-slug={establishment.slug}
     >
+      <ScrollToTop />
       <div className="max-w-md mx-auto">
         {/* Header base — cada página injeta contexto via BookingHeader próprio */}
         <div className="px-4 pt-6">

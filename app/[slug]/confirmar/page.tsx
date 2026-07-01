@@ -90,16 +90,10 @@ function ConfirmarContent() {
       <div className="bg-primary-light border border-secondary rounded-2xl px-4 py-3">
         <div className="flex items-start justify-between">
           <div className="flex flex-col gap-1">
-            <div className="flex items-center gap-2">
-              <span className="w-4 h-4 rounded-full bg-primary text-white text-[10px] flex items-center justify-center shrink-0">✓</span>
-              <p className="text-sm font-semibold text-primary-dark">{serviceName}</p>
-            </div>
-            {serviceLabel && <p className="text-xs text-primary ml-6">{serviceLabel}</p>}
+            <p className="text-sm font-semibold text-primary-dark">{serviceName}</p>
+            {serviceLabel && <p className="text-xs text-primary">{serviceLabel}</p>}
             {dateLabel && (
-              <div className="flex items-center gap-2">
-                <span className="w-4 h-4 rounded-full bg-primary text-white text-[10px] flex items-center justify-center shrink-0">✓</span>
-                <p className="text-xs font-medium text-primary-dark">{dateLabel}</p>
-              </div>
+              <p className="text-xs font-medium text-primary-dark">{dateLabel}</p>
             )}
           </div>
           <button
