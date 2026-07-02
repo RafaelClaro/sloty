@@ -122,10 +122,18 @@ export async function getAvailableDaysInMonth(
 ): Promise<number[]> {
   const availabilities = await prisma.availability.findMany({
     where: { establishmentId, active: true },
-    select: { dayOfWeek: true },
+    select: { dayOfWeek: true, endTime: true },
   })
 
-  const availableDays = new Set(availabilities.map((a: { dayOfWeek: number }) => a.dayOfWeek))
+  const availableDaysMap = new Map(
+    availabilities.map((a: { dayOfWeek: number; endTime: string }) => [a.dayOfWeek, a.endTime])
+  )
+
+  const now = new Date()
+  const nowInBRT = now.toLocaleString("sv-SE", { timeZone: TZ })
+  const [todayBRT, nowTimeBRT] = nowInBRT.split(" ")
+  const nowTimeHM = nowTimeBRT.slice(0, 5)
+
   const today = new Date()
   today.setHours(0, 0, 0, 0)
 
@@ -134,9 +142,16 @@ export async function getAvailableDaysInMonth(
 
   for (let day = 1; day <= daysInMonth; day++) {
     const date = new Date(year, month, day)
-    if (date >= today && availableDays.has(date.getDay())) {
-      days.push(day)
-    }
+    if (date < today) continue
+
+    const endTime = availableDaysMap.get(date.getDay())
+    if (!endTime) continue
+
+    const dateStr = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`
+    // Se é hoje e o expediente já encerrou (horário atual >= fim do expediente), não oferece o dia
+    if (dateStr === todayBRT && nowTimeHM >= endTime) continue
+
+    days.push(day)
   }
 
   return days

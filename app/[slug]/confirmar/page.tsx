@@ -49,7 +49,7 @@ function ConfirmarContent() {
   const validate = () => {
     const errs: { name?: string; phone?: string; email?: string } = {}
     if (!name.trim()) errs.name = "Informe seu nome completo"
-    if (phone.replace(/\D/g, "").length < 10) errs.phone = "Informe um WhatsApp válido"
+    if (phone.replace(/\D/g, "").length < 10) errs.phone = "Informe um telefone válido"
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) errs.email = "Informe um email válido"
     setErrors(errs)
     return Object.keys(errs).length === 0
@@ -110,7 +110,7 @@ function ConfirmarContent() {
       />
 
       <Input
-        label="WhatsApp"
+        label="Telefone"
         type="tel"
         value={phone}
         onChange={(e) => setPhone(formatPhone(e.target.value))}
