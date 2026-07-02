@@ -55,6 +55,7 @@ model Booking {
   serviceId       String
   clientName      String
   clientPhone     String
+  clientEmail     String?
   startTime       DateTime
   endTime         DateTime
   cancelToken     String        @unique

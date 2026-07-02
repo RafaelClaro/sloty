@@ -9,9 +9,9 @@ export async function POST(
 ) {
   const { slug } = await params
   const body = await request.json()
-  const { serviceId, startTime, clientName, clientPhone } = body
+  const { serviceId, startTime, clientName, clientPhone, clientEmail } = body
 
-  if (!serviceId || !startTime || !clientName || !clientPhone) {
+  if (!serviceId || !startTime || !clientName || !clientPhone || !clientEmail) {
     return NextResponse.json({ error: "Todos os campos são obrigatórios" }, { status: 400 })
   }
 
@@ -54,6 +54,7 @@ export async function POST(
           serviceId,
           clientName,
           clientPhone,
+          clientEmail,
           startTime: start,
           endTime: end,
           cancelToken: nanoid(8).toUpperCase(),

@@ -34,7 +34,8 @@ function ConfirmarContent() {
 
   const [name, setName] = useState("")
   const [phone, setPhone] = useState("")
-  const [errors, setErrors] = useState<{ name?: string; phone?: string }>({})
+  const [email, setEmail] = useState("")
+  const [errors, setErrors] = useState<{ name?: string; phone?: string; email?: string }>({})
   const [loading, setLoading] = useState(false)
   const [apiError, setApiError] = useState("")
 
@@ -46,9 +47,10 @@ function ConfirmarContent() {
   }
 
   const validate = () => {
-    const errs: { name?: string; phone?: string } = {}
+    const errs: { name?: string; phone?: string; email?: string } = {}
     if (!name.trim()) errs.name = "Informe seu nome completo"
     if (phone.replace(/\D/g, "").length < 10) errs.phone = "Informe um WhatsApp válido"
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) errs.email = "Informe um email válido"
     setErrors(errs)
     return Object.keys(errs).length === 0
   }
@@ -62,7 +64,7 @@ function ConfirmarContent() {
       const res = await fetch(`/api/${slug}/bookings`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ serviceId, startTime, clientName: name, clientPhone: phone }),
+        body: JSON.stringify({ serviceId, startTime, clientName: name, clientPhone: phone, clientEmail: email }),
       })
       const data = await res.json()
       if (res.status === 409) { setApiError(data.error); return }
@@ -114,6 +116,15 @@ function ConfirmarContent() {
         onChange={(e) => setPhone(formatPhone(e.target.value))}
         placeholder="(11) 00000-0000"
         error={errors.phone}
+      />
+
+      <Input
+        label="Email"
+        type="email"
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        placeholder="maria@exemplo.com"
+        error={errors.email}
       />
 
       {apiError && (
