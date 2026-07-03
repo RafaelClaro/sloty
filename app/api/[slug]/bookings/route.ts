@@ -86,6 +86,7 @@ export async function POST(
     }
 
     if (booking.clientEmail) {
+      console.log("[bookings] agendando after() para email de confirmação do cliente", booking.clientEmail)
       after(() =>
         sendBookingConfirmationToClient({
           toEmail: booking.clientEmail!,
