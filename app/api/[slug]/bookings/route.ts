@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server"
+import { after } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { nanoid } from "nanoid"
 import { notifyEstablishmentNewBooking, sendBookingConfirmationToClient } from "@/lib/email"
@@ -64,33 +65,40 @@ export async function POST(
       })
     })
 
-    // Email em background — nunca derruba o agendamento
+    // Email depois da resposta, via after(): a função serverless da Vercel
+    // pode congelar assim que a resposta é enviada, então promises soltas
+    // (fire-and-forget) arriscam ser cortadas antes de terminar. after()
+    // garante que a função continue viva até o callback terminar.
     if (establishment.notifyEmail) {
-      notifyEstablishmentNewBooking({
-        toEmail: establishment.notifyEmail,
-        establishmentName: establishment.name,
-        clientName: booking.clientName,
-        clientPhone: booking.clientPhone,
-        serviceName: booking.service.name,
-        servicePrice: Number(booking.service.price),
-        startTime: booking.startTime,
-        endTime: booking.endTime,
-        bookingId: booking.id,
-      }).catch((err) => console.error("[email notify]", err))
+      after(() =>
+        notifyEstablishmentNewBooking({
+          toEmail: establishment.notifyEmail!,
+          establishmentName: establishment.name,
+          clientName: booking.clientName,
+          clientPhone: booking.clientPhone,
+          serviceName: booking.service.name,
+          servicePrice: Number(booking.service.price),
+          startTime: booking.startTime,
+          endTime: booking.endTime,
+          bookingId: booking.id,
+        }).catch((err) => console.error("[email notify]", err))
+      )
     }
 
     if (booking.clientEmail) {
-      sendBookingConfirmationToClient({
-        toEmail: booking.clientEmail,
-        establishmentName: establishment.name,
-        establishmentSlug: establishment.slug,
-        clientName: booking.clientName,
-        serviceName: booking.service.name,
-        startTime: booking.startTime,
-        endTime: booking.endTime,
-        bookingId: booking.id,
-        cancelToken: booking.cancelToken,
-      }).catch((err) => console.error("[client confirmation email]", err))
+      after(() =>
+        sendBookingConfirmationToClient({
+          toEmail: booking.clientEmail!,
+          establishmentName: establishment.name,
+          establishmentSlug: establishment.slug,
+          clientName: booking.clientName,
+          serviceName: booking.service.name,
+          startTime: booking.startTime,
+          endTime: booking.endTime,
+          bookingId: booking.id,
+          cancelToken: booking.cancelToken,
+        }).catch((err) => console.error("[client confirmation email]", err))
+      )
     }
 
     return NextResponse.json({
