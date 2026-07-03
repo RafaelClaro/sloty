@@ -50,7 +50,7 @@ function ConfirmarContent() {
     const errs: { name?: string; phone?: string; email?: string } = {}
     if (!name.trim()) errs.name = "Informe seu nome completo"
     if (phone.replace(/\D/g, "").length < 10) errs.phone = "Informe um telefone válido"
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) errs.email = "Informe um email válido"
+    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) errs.email = "Informe um email válido"
     setErrors(errs)
     return Object.keys(errs).length === 0
   }
@@ -125,6 +125,7 @@ function ConfirmarContent() {
         onChange={(e) => setEmail(e.target.value)}
         placeholder="maria@exemplo.com"
         error={errors.email}
+        optional
       />
 
       {apiError && (

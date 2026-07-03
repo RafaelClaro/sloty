@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { nanoid } from "nanoid"
-import { notifyEstablishmentNewBooking } from "@/lib/email"
+import { notifyEstablishmentNewBooking, sendBookingConfirmationToClient } from "@/lib/email"
 
 export async function POST(
   request: NextRequest,
@@ -11,7 +11,7 @@ export async function POST(
   const body = await request.json()
   const { serviceId, startTime, clientName, clientPhone, clientEmail } = body
 
-  if (!serviceId || !startTime || !clientName || !clientPhone || !clientEmail) {
+  if (!serviceId || !startTime || !clientName || !clientPhone) {
     return NextResponse.json({ error: "Todos os campos são obrigatórios" }, { status: 400 })
   }
 
@@ -54,7 +54,7 @@ export async function POST(
           serviceId,
           clientName,
           clientPhone,
-          clientEmail,
+          clientEmail: clientEmail || null,
           startTime: start,
           endTime: end,
           cancelToken: nanoid(8).toUpperCase(),
@@ -77,6 +77,20 @@ export async function POST(
         endTime: booking.endTime,
         bookingId: booking.id,
       }).catch((err) => console.error("[email notify]", err))
+    }
+
+    if (booking.clientEmail) {
+      sendBookingConfirmationToClient({
+        toEmail: booking.clientEmail,
+        establishmentName: establishment.name,
+        establishmentSlug: establishment.slug,
+        clientName: booking.clientName,
+        serviceName: booking.service.name,
+        startTime: booking.startTime,
+        endTime: booking.endTime,
+        bookingId: booking.id,
+        cancelToken: booking.cancelToken,
+      }).catch((err) => console.error("[client confirmation email]", err))
     }
 
     return NextResponse.json({

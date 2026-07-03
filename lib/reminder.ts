@@ -1,13 +1,16 @@
 import { Resend } from "resend"
 
 const FROM_EMAIL = process.env.RESEND_FROM_EMAIL ?? "Agendamento <onboarding@resend.dev>"
+const APP_URL = process.env.NEXTAUTH_URL ?? "http://localhost:3000"
 
 interface SendBookingReminderParams {
   toEmail: string
   establishmentName: string
+  establishmentSlug: string
   clientName: string
   serviceName: string
   startTime: Date
+  cancelToken: string
 }
 
 /**
@@ -17,9 +20,11 @@ interface SendBookingReminderParams {
 export async function sendBookingReminder({
   toEmail,
   establishmentName,
+  establishmentSlug,
   clientName,
   serviceName,
   startTime,
+  cancelToken,
 }: SendBookingReminderParams) {
   if (!toEmail) return
 
@@ -30,15 +35,17 @@ export async function sendBookingReminder({
     hour: "2-digit", minute: "2-digit", timeZone: "America/Sao_Paulo",
   })
 
+  const cancelUrl = `${APP_URL}/${establishmentSlug}/cancelar`
+
   const resend = new Resend(process.env.RESEND_API_KEY)
   await resend.emails.send({
     from: FROM_EMAIL,
     to: toEmail,
-    subject: `⏰ Lembrete: sua consulta é amanhã, ${dateLabel}`,
+    subject: `⏰ Seu agendamento é amanhã, ${dateLabel}`,
     html: `
       <div style="font-family: -apple-system, sans-serif; max-width: 480px; margin: 0 auto;">
         <div style="background: #2D6A4F; padding: 20px; border-radius: 12px 12px 0 0;">
-          <h1 style="color: #fff; font-size: 18px; margin: 0;">Lembrete de consulta</h1>
+          <h1 style="color: #fff; font-size: 18px; margin: 0;">Seu agendamento é amanhã!</h1>
           <p style="color: rgba(255,255,255,0.8); font-size: 13px; margin: 4px 0 0;">${establishmentName}</p>
         </div>
         <div style="border: 1px solid #D1D5DB; border-top: none; border-radius: 0 0 12px 12px; padding: 20px;">
@@ -51,9 +58,17 @@ export async function sendBookingReminder({
             <tr><td style="padding: 6px 0; color: #6B7280;">Data</td><td style="padding: 6px 0; font-weight: 600;">${dateLabel}</td></tr>
             <tr><td style="padding: 6px 0; color: #6B7280;">Horário</td><td style="padding: 6px 0; font-weight: 600;">${timeLabel}</td></tr>
           </table>
-          <p style="font-size: 12px; color: #6B7280; margin-top: 16px;">
-            Se precisar cancelar, use o código enviado na confirmação do agendamento.
-          </p>
+
+          <div style="background: #F9FAF8; border: 1px solid #D1D5DB; border-radius: 8px;
+                      padding: 14px; text-align: center; margin-top: 20px;">
+            <p style="font-size: 11px; color: #6B7280; margin: 0;">Código para cancelar</p>
+            <p style="font-size: 20px; font-weight: 700; color: #1A1A2E; letter-spacing: 0.15em; margin: 4px 0;">
+              ${cancelToken}
+            </p>
+            <a href="${cancelUrl}" style="font-size: 12px; color: #2D6A4F; font-weight: 600;">
+              Cancelar este agendamento
+            </a>
+          </div>
         </div>
       </div>
     `,

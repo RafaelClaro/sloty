@@ -38,9 +38,11 @@ export async function GET(request: NextRequest) {
       await sendBookingReminder({
         toEmail: booking.clientEmail,
         establishmentName: booking.establishment.name,
+        establishmentSlug: booking.establishment.slug,
         clientName: booking.clientName,
         serviceName: booking.service.name,
         startTime: booking.startTime,
+        cancelToken: booking.cancelToken,
       })
       sent++
     } catch (error) {
