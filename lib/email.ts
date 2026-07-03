@@ -166,6 +166,7 @@ export async function sendBookingConfirmationToClient({
   bookingId,
   cancelToken,
 }: ConfirmationToClientParams) {
+  console.log("[sendBookingConfirmationToClient] iniciando envio para", toEmail)
   if (!toEmail) return
 
   const dateLabel = startTime.toLocaleDateString("pt-BR", {
@@ -250,6 +251,7 @@ export async function sendBookingConfirmationToClient({
         },
       ],
     })
+    console.log("[sendBookingConfirmationToClient] email enviado com sucesso para", toEmail)
   } catch (error) {
     console.error("[sendBookingConfirmationToClient] erro ao enviar email:", error)
   }
