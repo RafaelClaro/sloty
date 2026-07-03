@@ -104,4 +104,3 @@ npm run db:studio
 Criar registro em `Establishment` + `User` + `Service` + `Availability`.
 
 > Super Admin (interface de cadastro de clientes) é a Fase 3 do produto.
-
