@@ -95,7 +95,7 @@ export async function notifyEstablishmentNewBooking({
 
   try {
     const resend = new Resend(process.env.RESEND_API_KEY)
-    await resend.emails.send({
+    const { error } = await resend.emails.send({
       from: FROM_EMAIL,
       to: toEmail,
       subject: `📅 Novo agendamento — ${clientName} em ${dateLabel}`,
@@ -145,6 +145,9 @@ export async function notifyEstablishmentNewBooking({
         },
       ],
     })
+    if (error) {
+      console.error("[notifyEstablishmentNewBooking] Resend recusou o envio:", error)
+    }
   } catch (error) {
     // Falha no email nunca deve quebrar o agendamento em si
     console.error("[notifyEstablishmentNewBooking] erro ao enviar email:", error)
@@ -198,7 +201,7 @@ export async function sendBookingConfirmationToClient({
 
   try {
     const resend = new Resend(process.env.RESEND_API_KEY)
-    await resend.emails.send({
+    const { data, error } = await resend.emails.send({
       from: FROM_EMAIL,
       to: toEmail,
       subject: `✓ Agendamento confirmado — ${dateLabel}`,
@@ -251,7 +254,11 @@ export async function sendBookingConfirmationToClient({
         },
       ],
     })
-    console.log("[sendBookingConfirmationToClient] email enviado com sucesso para", toEmail)
+    if (error) {
+      console.error("[sendBookingConfirmationToClient] Resend recusou o envio:", error)
+      return
+    }
+    console.log("[sendBookingConfirmationToClient] email enviado com sucesso, id:", data?.id)
   } catch (error) {
     console.error("[sendBookingConfirmationToClient] erro ao enviar email:", error)
   }

@@ -38,7 +38,7 @@ export async function sendBookingReminder({
   const cancelUrl = `${APP_URL}/${establishmentSlug}/cancelar`
 
   const resend = new Resend(process.env.RESEND_API_KEY)
-  await resend.emails.send({
+  const { error } = await resend.emails.send({
     from: FROM_EMAIL,
     to: toEmail,
     subject: `⏰ Seu agendamento é amanhã, ${dateLabel}`,
@@ -73,4 +73,8 @@ export async function sendBookingReminder({
       </div>
     `,
   })
+
+  if (error) {
+    throw new Error(`Resend recusou o envio: ${error.message}`)
+  }
 }
