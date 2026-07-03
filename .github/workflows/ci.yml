@@ -1,0 +1,51 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    name: Testes automatizados
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL_TEST }}
+      NEXTAUTH_SECRET: "ci-test-secret-nao-usar-em-producao"
+      NEXTAUTH_URL: "http://localhost:3000"
+      RESEND_API_KEY: "re_test_fake_key_ci"
+      RESEND_FROM_EMAIL: "test@test.com"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Instalar dependências
+        run: npm ci
+
+      - name: Gerar Prisma client
+        run: npx prisma generate
+
+      - name: Rodar migrations no banco de teste
+        run: npx prisma migrate deploy
+
+      - name: Rodar testes
+        run: npm run test:ci
+
+      - name: Verificar cobertura
+        run: npm run test:coverage
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: coverage-report
+          path: coverage/
+          retention-days: 7
