@@ -119,13 +119,12 @@ function ConfirmarContent() {
       />
 
       <Input
-        label="Email"
+        label="Seu melhor email"
         type="email"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         placeholder="maria@exemplo.com"
         error={errors.email}
-        optional
       />
 
       {apiError && (
