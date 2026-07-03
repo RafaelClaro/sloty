@@ -1,8 +1,11 @@
 import { execSync } from "child_process"
-import { beforeAll } from "vitest"
 
-// Roda migrations no banco de teste antes de todos os testes
-beforeAll(async () => {
+// Global setup do Vitest: roda uma única vez para toda a suíte, ao invés de
+// uma vez por arquivo de teste. Rodar "prisma migrate deploy" por arquivo
+// (via setupFiles) faz múltiplos processos disputarem o mesmo advisory lock
+// do Postgres quase simultaneamente, o que é frágil contra um banco
+// serverless (Neon) com latência variável de cold-start no pooler.
+export default async function setup() {
   execSync("npx prisma migrate deploy", {
     env: {
       ...process.env,
@@ -10,4 +13,4 @@ beforeAll(async () => {
     },
     stdio: "inherit",
   })
-})
+}

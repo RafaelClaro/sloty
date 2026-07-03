@@ -17,6 +17,7 @@ jobs:
       NEXTAUTH_URL: "http://localhost:3000"
       RESEND_API_KEY: "re_test_fake_key_ci"
       RESEND_FROM_EMAIL: "test@test.com"
+      CRON_SECRET: "ci-test-cron-secret-nao-usar-em-producao"
     steps:
       - name: Checkout
         uses: actions/checkout@v4
