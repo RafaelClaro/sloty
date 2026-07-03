@@ -34,13 +34,7 @@ jobs:
       - name: Gerar Prisma client
         run: npx prisma generate
 
-      - name: Rodar migrations no banco de teste
-        run: npx prisma migrate deploy
-
-      - name: Rodar testes
-        run: npm run test:ci
-
-      - name: Verificar cobertura
+      - name: Rodar testes e verificar cobertura
         run: npm run test:coverage
 
       - name: Upload coverage report
