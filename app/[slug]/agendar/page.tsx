@@ -55,7 +55,19 @@ function AgendarContent() {
     }
   }, [slug, serviceId, year, month])
 
-  useEffect(() => { fetchDays() }, [fetchDays])
+  useEffect(() => {
+    setSelectedDay(null)
+    setSlots([])
+    setSelectedSlot(null)
+    fetchDays()
+  }, [fetchDays])
+
+  useEffect(() => {
+    if (availableDays.length > 0 && selectedDay === null) {
+      setSelectedDay(availableDays[0])
+    }
+  }, [availableDays])
+
   useEffect(() => { if (selectedDay) fetchSlots(selectedDay) }, [selectedDay, fetchSlots])
 
   const handleNext = () => {
@@ -122,7 +134,7 @@ function AgendarContent() {
                   ${isSelected ? "bg-primary text-white font-bold shadow-card scale-105" : ""}
                   ${isAvailable && !isSelected ? "text-neutral-900 font-medium cursor-pointer hover:bg-primary-light hover:text-primary" : ""}
                   ${!isAvailable && day ? "text-neutral-300 cursor-default" : ""}
-                  ${isToday && !isSelected ? "text-primary font-bold ring-1 ring-primary/40" : ""}
+                  ${isToday && !isSelected && isAvailable ? "text-primary font-bold ring-1 ring-primary/40" : ""}
                 `}
               >
                 {day ?? ""}
