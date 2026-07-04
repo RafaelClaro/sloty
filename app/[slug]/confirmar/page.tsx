@@ -33,6 +33,7 @@ function ConfirmarContent() {
   const [name, setName] = useState("")
   const [phone, setPhone] = useState("")
   const [email, setEmail] = useState("")
+  const [reason, setReason] = useState("")
   const [errors, setErrors] = useState<{ name?: string; phone?: string; email?: string }>({})
   const [loading, setLoading] = useState(false)
   const [apiError, setApiError] = useState("")
@@ -62,7 +63,7 @@ function ConfirmarContent() {
       const res = await fetch(`/api/${slug}/bookings`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ serviceId, startTime, clientName: name, clientPhone: phone, clientEmail: email }),
+        body: JSON.stringify({ serviceId, startTime, clientName: name, clientPhone: phone, clientEmail: email, reason: reason || undefined }),
       })
       const data = await res.json()
       if (res.status === 409) { setApiError(data.error); return }
@@ -172,6 +173,47 @@ function ConfirmarContent() {
           onBlur={(e) => { e.target.style.background = "#F3F4F6"; e.target.style.boxShadow = "none" }}
         />
         {errors.email && <span style={{ fontSize: 12, color: "#EF4444", marginTop: 2, display: "block" }}>{errors.email}</span>}
+      </div>
+
+      {/* Motivo da consulta */}
+      <div>
+        <label style={labelStyle}>
+          Motivo da consulta{" "}
+          <span style={{ color: "#9CA3AF", fontWeight: 400 }}>(opcional)</span>
+        </label>
+        <div style={{ position: "relative" }}>
+          <textarea
+            rows={3}
+            maxLength={500}
+            value={reason}
+            onChange={(e) => setReason(e.target.value)}
+            placeholder="Ex: dor abdominal há 3 dias, quero avaliar meu peso, acompanhamento pós-cirurgia..."
+            style={{
+              ...inputBase,
+              resize: "none",
+              fontFamily: "inherit",
+              lineHeight: 1.5,
+              paddingBottom: 24,
+            }}
+            onFocus={(e) => { e.target.style.background = "#E9FAF0"; e.target.style.boxShadow = "0 0 0 2px #74C69D" }}
+            onBlur={(e) => { e.target.style.background = "#F3F4F6"; e.target.style.boxShadow = "none" }}
+          />
+          <span
+            style={{
+              position: "absolute",
+              bottom: 8,
+              right: 12,
+              fontSize: 11,
+              color: reason.length >= 450 ? "#F59E0B" : "#9CA3AF",
+              pointerEvents: "none",
+            }}
+          >
+            {reason.length}/500
+          </span>
+        </div>
+        <p style={{ fontSize: 11, color: "#9CA3AF", marginTop: 4 }}>
+          Ajuda a médica a se preparar melhor para a sua consulta.
+        </p>
       </div>
 
       {apiError && (

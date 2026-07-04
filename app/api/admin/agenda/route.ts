@@ -20,7 +20,15 @@ export async function GET(request: NextRequest) {
         lt: new Date(date.getFullYear(), date.getMonth(), date.getDate(), 23, 59, 59),
       },
     },
-    include: { service: true },
+    select: {
+      id: true,
+      startTime: true,
+      endTime: true,
+      clientName: true,
+      clientPhone: true,
+      reason: true,
+      service: { select: { name: true, durationMinutes: true } },
+    },
     orderBy: { startTime: "asc" },
   })
 

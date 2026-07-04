@@ -15,6 +15,7 @@ interface NotifyNewBookingParams {
   startTime: Date
   endTime: Date
   bookingId: string
+  reason?: string
 }
 
 interface ConfirmationToClientParams {
@@ -65,6 +66,7 @@ export async function notifyEstablishmentNewBooking({
   startTime,
   endTime,
   bookingId,
+  reason,
 }: NotifyNewBookingParams) {
   if (!toEmail) return // sem email configurado, não envia
 
@@ -113,6 +115,7 @@ export async function notifyEstablishmentNewBooking({
               <tr><td style="padding: 6px 0; color: #6B7280;">Valor</td><td style="padding: 6px 0; color: #2D6A4F; font-weight: 600;">${formatCurrency(servicePrice)}</td></tr>
               <tr><td style="padding: 6px 0; color: #6B7280;">Data</td><td style="padding: 6px 0; font-weight: 600;">${dateLabel}</td></tr>
               <tr><td style="padding: 6px 0; color: #6B7280;">Horário</td><td style="padding: 6px 0; font-weight: 600;">${timeLabel}</td></tr>
+              ${reason ? `<tr><td style="padding: 6px 0; color: #6B7280; vertical-align: top;">Motivo</td><td style="padding: 6px 0; color: #374151; font-style: italic;">${reason}</td></tr>` : ""}
             </table>
 
             <p style="font-size: 12px; font-weight: 600; color: #6B7280; text-transform: uppercase; letter-spacing: 0.05em; margin: 20px 0 8px;">

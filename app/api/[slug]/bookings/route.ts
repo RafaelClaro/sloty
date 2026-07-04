@@ -10,7 +10,7 @@ export async function POST(
 ) {
   const { slug } = await params
   const body = await request.json()
-  const { serviceId, startTime, clientName, clientPhone, clientEmail } = body
+  const { serviceId, startTime, clientName, clientPhone, clientEmail, reason } = body
 
   if (!serviceId || !startTime || !clientName || !clientPhone) {
     return NextResponse.json({ error: "Todos os campos são obrigatórios" }, { status: 400 })
@@ -56,6 +56,7 @@ export async function POST(
           clientName,
           clientPhone,
           clientEmail: clientEmail || null,
+          reason: reason ?? null,
           startTime: start,
           endTime: end,
           cancelToken: nanoid(8).toUpperCase(),
@@ -81,6 +82,7 @@ export async function POST(
           startTime: booking.startTime,
           endTime: booking.endTime,
           bookingId: booking.id,
+          reason: booking.reason ?? undefined,
         }).catch((err) => console.error("[email notify]", err))
       )
     }
