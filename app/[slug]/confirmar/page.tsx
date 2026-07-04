@@ -2,8 +2,6 @@
 
 import { useState, Suspense } from "react"
 import { useRouter, useSearchParams, useParams } from "next/navigation"
-import { Button } from "@/components/ui/Button"
-import { Input } from "@/components/ui/Input"
 
 function ConfirmarContent() {
   const router = useRouter()
@@ -79,53 +77,102 @@ function ConfirmarContent() {
     }
   }
 
+  const inputBase: React.CSSProperties = {
+    background: "#F3F4F6",
+    border: "none",
+    borderRadius: 10,
+    padding: "11px 14px",
+    fontSize: 14,
+    color: "#111827",
+    width: "100%",
+    outline: "none",
+    boxSizing: "border-box",
+  }
+
+  const labelStyle: React.CSSProperties = {
+    fontSize: 12,
+    fontWeight: 500,
+    color: "#374151",
+    marginBottom: 4,
+    display: "block",
+  }
+
   return (
     <div className="flex flex-col gap-4">
-      {/* Contexto acumulado */}
-      <div className="bg-primary-light border border-secondary rounded-2xl px-4 py-3">
+      {/* Card de resumo */}
+      <div
+        style={{
+          background: "#F0FDF4",
+          border: "1px solid #D1FAE5",
+          borderRadius: 12,
+          padding: "12px 14px",
+        }}
+      >
         <div className="flex items-start justify-between">
-          <div className="flex flex-col gap-1">
-            <p className="text-sm font-semibold text-primary-dark">{serviceName}</p>
-            {serviceLabel && <p className="text-xs text-primary">{serviceLabel}</p>}
-            {dateLabel && (
-              <p className="text-xs font-medium text-primary-dark">{dateLabel}</p>
+          <div className="flex flex-col gap-0.5 min-w-0 flex-1">
+            <p style={{ fontSize: 14, fontWeight: 500, color: "#14532D" }}>{serviceName}</p>
+            {serviceLabel && (
+              <p style={{ fontSize: 12, color: "#52B788" }}>{serviceLabel}</p>
+            )}
+            {dateTimeFormatted && (
+              <p style={{ fontSize: 12, fontWeight: 500, color: "#2D6A4F" }}>{dateTimeFormatted}</p>
             )}
           </div>
           <button
             onClick={() => router.push(`/${slug}/agendar?serviceId=${serviceId}&serviceName=${encodeURIComponent(serviceName)}&serviceLabel=${encodeURIComponent(serviceLabel)}`)}
-            className="text-xs font-semibold text-primary underline hover:text-primary-dark ml-4 shrink-0"
+            style={{ fontSize: 11, color: "#52B788", textDecoration: "underline", marginLeft: 12, flexShrink: 0 }}
           >
             Alterar
           </button>
         </div>
       </div>
 
-      {/* Dados do paciente */}
-      <Input
-        label="Nome completo"
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        placeholder="Maria da Silva"
-        error={errors.name}
-      />
+      {/* Nome completo */}
+      <div>
+        <label style={labelStyle}>Nome completo</label>
+        <input
+          style={inputBase}
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          placeholder="Maria da Silva"
+          onFocus={(e) => { e.target.style.background = "#E9FAF0"; e.target.style.boxShadow = "0 0 0 2px #74C69D" }}
+          onBlur={(e) => { e.target.style.background = "#F3F4F6"; e.target.style.boxShadow = "none" }}
+        />
+        {errors.name && <span style={{ fontSize: 12, color: "#EF4444", marginTop: 2, display: "block" }}>{errors.name}</span>}
+      </div>
 
-      <Input
-        label="Telefone"
-        type="tel"
-        value={phone}
-        onChange={(e) => setPhone(formatPhone(e.target.value))}
-        placeholder="(11) 00000-0000"
-        error={errors.phone}
-      />
+      {/* WhatsApp */}
+      <div>
+        <label style={labelStyle}>WhatsApp</label>
+        <input
+          style={inputBase}
+          type="tel"
+          value={phone}
+          onChange={(e) => setPhone(formatPhone(e.target.value))}
+          placeholder="(11) 00000-0000"
+          onFocus={(e) => { e.target.style.background = "#E9FAF0"; e.target.style.boxShadow = "0 0 0 2px #74C69D" }}
+          onBlur={(e) => { e.target.style.background = "#F3F4F6"; e.target.style.boxShadow = "none" }}
+        />
+        {errors.phone && <span style={{ fontSize: 12, color: "#EF4444", marginTop: 2, display: "block" }}>{errors.phone}</span>}
+      </div>
 
-      <Input
-        label="Seu melhor email"
-        type="email"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        placeholder="maria@exemplo.com"
-        error={errors.email}
-      />
+      {/* Email (opcional) */}
+      <div>
+        <label style={labelStyle}>
+          Email{" "}
+          <span style={{ color: "#9CA3AF", fontWeight: 400 }}>(opcional)</span>
+        </label>
+        <input
+          style={inputBase}
+          type="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          placeholder="maria@exemplo.com"
+          onFocus={(e) => { e.target.style.background = "#E9FAF0"; e.target.style.boxShadow = "0 0 0 2px #74C69D" }}
+          onBlur={(e) => { e.target.style.background = "#F3F4F6"; e.target.style.boxShadow = "none" }}
+        />
+        {errors.email && <span style={{ fontSize: 12, color: "#EF4444", marginTop: 2, display: "block" }}>{errors.email}</span>}
+      </div>
 
       {apiError && (
         <div className="bg-error-light border border-error rounded-2xl p-3">
@@ -138,11 +185,27 @@ function ConfirmarContent() {
         </div>
       )}
 
-      <Button variant="primary" size="lg" loading={loading} onClick={handleSubmit}>
-        Agendar agora
-      </Button>
+      {/* Botão agendar */}
+      <button
+        onClick={handleSubmit}
+        disabled={loading}
+        style={{
+          background: loading ? "#52B788" : "#2D6A4F",
+          color: "#fff",
+          borderRadius: 12,
+          padding: "13px",
+          fontSize: 15,
+          fontWeight: 500,
+          width: "100%",
+          border: "none",
+          cursor: loading ? "not-allowed" : "pointer",
+          transition: "background 0.15s",
+        }}
+      >
+        {loading ? "Agendando..." : "Agendar agora"}
+      </button>
 
-      <p className="text-xs text-neutral-500 text-center">
+      <p style={{ fontSize: 11, color: "#9CA3AF", textAlign: "center" }}>
         🔒 Seus dados são usados apenas para confirmar seu agendamento.
       </p>
     </div>
