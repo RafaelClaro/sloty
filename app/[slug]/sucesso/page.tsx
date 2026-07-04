@@ -1,5 +1,4 @@
 import Link from "next/link"
-import { generateIcsEvent } from "@/lib/ics"
 import { CopyCodeButton } from "./CopyCodeButton"
 
 export default async function SucessoPage({
@@ -17,21 +16,12 @@ export default async function SucessoPage({
   })
 
   const [h, m] = time.split(":").map(Number)
-  const startTime = new Date(`${date}T${time}:00`)
-  const endTime = new Date(startTime.getTime() + 60 * 60 * 1000)
 
   const startISO = `${date.replace(/-/g, "")}T${time.replace(":", "")}00`
   const endISO = `${date.replace(/-/g, "")}T${String(h + 1).padStart(2, "0")}${String(m).padStart(2, "0")}00`
   const calUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(decodeURIComponent(service))}&dates=${startISO}/${endISO}`
 
-  const ics = generateIcsEvent({
-    uid: token,
-    title: decodeURIComponent(service),
-    description: `Agendamento em ${slug}`,
-    startTime,
-    endTime,
-  })
-  const icsDataUrl = `data:text/calendar;charset=utf-8,${encodeURIComponent(ics)}`
+  const icsUrl = `/api/${slug}/ics?token=${encodeURIComponent(token)}&service=${encodeURIComponent(service)}&date=${date}&time=${time}`
 
   return (
     <div className="flex flex-col items-center text-center gap-4 py-8">
@@ -68,8 +58,7 @@ export default async function SucessoPage({
         </a>
 
         <a
-          href={icsDataUrl}
-          download="agendamento.ics"
+          href={icsUrl}
           className="w-full border border-primary text-primary rounded-2xl py-3 text-sm
                      font-semibold text-center hover:bg-primary-light active:scale-[0.98] transition-all"
         >
