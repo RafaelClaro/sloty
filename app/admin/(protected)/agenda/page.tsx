@@ -256,15 +256,15 @@ export default function AgendaPage() {
 
   return (
     <div className="p-4 md:p-8 max-w-5xl flex flex-col gap-4">
-      <div className="flex justify-between items-start">
-        <div>
-          <h1 className="text-lg font-bold text-neutral-900">Agenda</h1>
-          <p className="text-sm text-neutral-500 capitalize">{dateLabel}</p>
-        </div>
-        <span className="bg-primary-light text-primary-dark text-xs font-semibold px-2 py-1 rounded-full">
-          {date === today.toISOString().split("T")[0] ? "Hoje" : ""}
-        </span>
+      <div className="flex items-center gap-3">
+        <h1 className="text-lg font-bold text-neutral-900">Agenda</h1>
+        {date === today.toISOString().split("T")[0] && (
+          <span className="bg-primary-light text-primary-dark text-xs font-semibold px-2 py-1 rounded-full">
+            Hoje
+          </span>
+        )}
       </div>
+      <p className="text-sm text-neutral-500 capitalize -mt-2">{dateLabel}</p>
 
       <input
         type="date"
