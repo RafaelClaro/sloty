@@ -14,8 +14,21 @@ interface Booking {
   service: { name: string; durationMinutes: number }
 }
 
+interface HistoryEntry {
+  id: string
+  startTime: string
+  service: { name: string }
+}
+
 function formatTime(iso: string) {
   return new Date(iso).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })
+}
+
+function formatHistoryDate(iso: string) {
+  const d = new Date(iso)
+  const day = d.toLocaleDateString("pt-BR", { day: "numeric", month: "short" }).replace(".", "")
+  const time = d.toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })
+  return `${day} · ${time}`
 }
 
 function BookingCard({
@@ -28,12 +41,30 @@ function BookingCard({
   const [expanded, setExpanded] = useState(false)
   const [confirmCancel, setConfirmCancel] = useState(false)
   const [cancelling, setCancelling] = useState(false)
+  const [history, setHistory] = useState<HistoryEntry[] | null>(null)
+  const [historyOpen, setHistoryOpen] = useState(false)
+  const [historyLoading, setHistoryLoading] = useState(false)
 
   const handleCancel = async () => {
     setCancelling(true)
     await onCancel(b.id)
     setCancelling(false)
     setConfirmCancel(false)
+  }
+
+  const handleToggleExpand = async () => {
+    const next = !expanded
+    setExpanded(next)
+    if (next && history === null) {
+      setHistoryLoading(true)
+      try {
+        const res = await fetch(`/api/admin/bookings/history?phone=${encodeURIComponent(b.clientPhone)}&excludeId=${b.id}`)
+        const data = await res.json()
+        setHistory(data.bookings ?? [])
+      } finally {
+        setHistoryLoading(false)
+      }
+    }
   }
 
   return (
@@ -43,7 +74,7 @@ function BookingCard({
     >
       {/* Header do card — sempre visível */}
       <button
-        onClick={() => setExpanded((v) => !v)}
+        onClick={handleToggleExpand}
         className="w-full text-left p-4 flex items-start justify-between gap-3"
       >
         <div className="flex-1 min-w-0">
@@ -105,6 +136,60 @@ function BookingCard({
               </p>
             )}
           </div>
+
+          {/* Histórico do paciente */}
+          {historyLoading ? (
+            <div className="h-4 w-32 bg-neutral-100 rounded animate-pulse" />
+          ) : history && history.length > 0 ? (
+            <div>
+              <div className="flex items-center justify-between">
+                <p
+                  className="uppercase font-semibold"
+                  style={{ fontSize: 11, color: "#9CA3AF", letterSpacing: "0.06em" }}
+                >
+                  Histórico
+                </p>
+                {!historyOpen && (
+                  <span style={{ fontSize: 12, color: "#6B7280" }}>
+                    {history.length} consulta{history.length > 1 ? "s" : ""} anterior{history.length > 1 ? "es" : ""}{" "}
+                    <button
+                      onClick={() => setHistoryOpen(true)}
+                      style={{ color: "#2D6A4F", textDecoration: "underline", fontSize: 12 }}
+                    >
+                      ver
+                    </button>
+                  </span>
+                )}
+              </div>
+
+              {historyOpen && (
+                <div className="mt-2">
+                  {history.map((h, i) => (
+                    <div
+                      key={h.id}
+                      style={{
+                        padding: "7px 0",
+                        borderTop: i === 0 ? "none" : "1px solid #F3F4F6",
+                      }}
+                    >
+                      <p style={{ fontSize: 12, color: "#374151" }}>
+                        {formatHistoryDate(h.startTime)} — {h.service.name}
+                      </p>
+                    </div>
+                  ))}
+                  {history.length === 5 && (
+                    <p style={{ fontSize: 11, color: "#9CA3AF", marginTop: 4 }}>ver todos</p>
+                  )}
+                  <button
+                    onClick={() => setHistoryOpen(false)}
+                    style={{ color: "#2D6A4F", textDecoration: "underline", fontSize: 12, marginTop: 4 }}
+                  >
+                    ocultar
+                  </button>
+                </div>
+              )}
+            </div>
+          ) : null}
 
           {/* Cancelamento inline */}
           {confirmCancel ? (
