@@ -7,6 +7,7 @@ import { PATCH as patchService, DELETE as deleteService } from "@/app/api/admin/
 import { GET as getAvailabilityRules, PUT as putAvailabilityRules } from "@/app/api/admin/availability-rules/route"
 import { GET as getEstablishment, PATCH as patchEstablishment } from "@/app/api/admin/establishment/route"
 import { PATCH as patchBooking } from "@/app/api/admin/bookings/[id]/route"
+import { GET as getHistory } from "@/app/api/admin/bookings/history/route"
 
 vi.mock("next-auth", () => ({
   getServerSession: vi.fn(),
@@ -205,6 +206,67 @@ describe("/api/admin/bookings/[id]", () => {
 
     const updated = await prisma.booking.findUnique({ where: { id: booking.id } })
     expect(updated?.status).toBe("CANCELLED")
+  })
+
+  it("GET /history retorna consultas anteriores do mesmo telefone excluindo o atual", async () => {
+    const phone = "11988887777"
+    const b1 = await prisma.booking.create({
+      data: {
+        establishmentId: establishmentA.id,
+        serviceId: serviceAId,
+        clientName: "Paciente Histórico",
+        clientPhone: phone,
+        startTime: new Date("2099-06-01T10:00:00.000Z"),
+        endTime: new Date("2099-06-01T10:30:00.000Z"),
+        cancelToken: "HIST001",
+        status: "CONFIRMED",
+      },
+    })
+    const b2 = await prisma.booking.create({
+      data: {
+        establishmentId: establishmentA.id,
+        serviceId: serviceAId,
+        clientName: "Paciente Histórico",
+        clientPhone: phone,
+        startTime: new Date("2099-06-02T10:00:00.000Z"),
+        endTime: new Date("2099-06-02T10:30:00.000Z"),
+        cancelToken: "HIST002",
+        status: "CONFIRMED",
+      },
+    })
+
+    mockedGetServerSession.mockResolvedValue(sessionFor(establishmentA.id, establishmentA.slug))
+    const req = new NextRequest(`http://localhost/api/admin/bookings/history?phone=${phone}&excludeId=${b2.id}`)
+    const res = await getHistory(req)
+    const data = await res.json()
+
+    expect(res.status).toBe(200)
+    expect(data.bookings).toHaveLength(1)
+    expect(data.bookings[0].id).toBe(b1.id)
+  })
+
+  it("GET /history não vaza bookings de outro estabelecimento", async () => {
+    const phone = "11977776666"
+    await prisma.booking.create({
+      data: {
+        establishmentId: establishmentB.id,
+        serviceId: serviceAId,
+        clientName: "Outro Est",
+        clientPhone: phone,
+        startTime: new Date("2099-06-03T10:00:00.000Z"),
+        endTime: new Date("2099-06-03T10:30:00.000Z"),
+        cancelToken: "HIST003",
+        status: "CONFIRMED",
+      },
+    })
+
+    mockedGetServerSession.mockResolvedValue(sessionFor(establishmentA.id, establishmentA.slug))
+    const req = new NextRequest(`http://localhost/api/admin/bookings/history?phone=${phone}`)
+    const res = await getHistory(req)
+    const data = await res.json()
+
+    expect(res.status).toBe(200)
+    expect(data.bookings).toHaveLength(0)
   })
 
   it("PATCH em booking de outro estabelecimento retorna 404 (isolamento)", async () => {
