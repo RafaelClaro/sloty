@@ -211,9 +211,6 @@ function ConfirmarContent() {
             {reason.length}/500
           </span>
         </div>
-        <p style={{ fontSize: 11, color: "#9CA3AF", marginTop: 4 }}>
-          Ajuda a médica a se preparar melhor para a sua consulta.
-        </p>
       </div>
 
       {apiError && (
