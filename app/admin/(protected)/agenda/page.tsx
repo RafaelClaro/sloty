@@ -11,6 +11,7 @@ interface Booking {
   clientName: string
   clientPhone: string
   reason: string | null
+  notes: string | null
   service: { name: string; durationMinutes: number }
 }
 
@@ -18,29 +19,18 @@ function formatTime(iso: string) {
   return new Date(iso).toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" })
 }
 
-function PatientNotes({ phone }: { phone: string }) {
-  const [notes, setNotes] = useState("")
-  const [saved, setSaved] = useState("")
-  const [loading, setLoading] = useState(true)
+function PatientNotes({ bookingId, initialNotes }: { bookingId: string; initialNotes: string }) {
+  const [notes, setNotes] = useState(initialNotes)
+  const [saved, setSaved] = useState(initialNotes)
   const [saving, setSaving] = useState(false)
   const [justSaved, setJustSaved] = useState(false)
-
-  useEffect(() => {
-    fetch(`/api/admin/patients/notes?phone=${encodeURIComponent(phone)}`)
-      .then((r) => r.json())
-      .then((d) => {
-        setNotes(d.notes ?? "")
-        setSaved(d.notes ?? "")
-      })
-      .finally(() => setLoading(false))
-  }, [phone])
 
   const handleSave = async () => {
     setSaving(true)
     await fetch("/api/admin/patients/notes", {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ phone, notes }),
+      body: JSON.stringify({ bookingId, notes }),
     })
     setSaved(notes)
     setSaving(false)
@@ -49,8 +39,6 @@ function PatientNotes({ phone }: { phone: string }) {
   }
 
   const dirty = notes !== saved
-
-  if (loading) return <div className="h-16 bg-neutral-100 rounded-lg animate-pulse" />
 
   return (
     <div>
@@ -197,7 +185,7 @@ function BookingCard({
           </div>
 
           {/* Anotações livres */}
-          <PatientNotes phone={b.clientPhone} />
+          <PatientNotes bookingId={b.id} initialNotes={b.notes ?? ""} />
 
           {/* Cancelamento inline */}
           {confirmCancel ? (

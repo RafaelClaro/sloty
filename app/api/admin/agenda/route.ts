@@ -27,6 +27,7 @@ export async function GET(request: NextRequest) {
       clientName: true,
       clientPhone: true,
       reason: true,
+      notes: true,
       service: { select: { name: true, durationMinutes: true } },
     },
     orderBy: { startTime: "asc" },
