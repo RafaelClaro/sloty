@@ -92,7 +92,7 @@ export default function ServicosPage() {
   }
 
   return (
-    <div className="p-4 flex flex-col gap-4">
+    <div className="p-4 md:p-8 flex flex-col gap-4">
       <div className="flex justify-between items-center">
         <h1 className="text-lg font-bold text-neutral-900">Serviços</h1>
         <Button
@@ -139,7 +139,7 @@ export default function ServicosPage() {
           cta={{ label: "Adicionar serviço", onClick: () => setShowForm(true) }}
         />
       ) : (
-        <div className="flex flex-col gap-3">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           {services.map((s) => (
             <div key={s.id} className="bg-neutral-100 border border-neutral-300 rounded-md p-4">
               {confirmDelete === s.id ? (

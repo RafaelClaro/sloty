@@ -255,7 +255,7 @@ export default function AgendaPage() {
   })
 
   return (
-    <div className="p-4 flex flex-col gap-4">
+    <div className="p-4 md:p-8 max-w-5xl flex flex-col gap-4">
       <div className="flex justify-between items-start">
         <div>
           <h1 className="text-lg font-bold text-neutral-900">Agenda</h1>
@@ -270,7 +270,7 @@ export default function AgendaPage() {
         type="date"
         value={date}
         onChange={(e) => setDate(e.target.value)}
-        className="border border-neutral-300 rounded-md px-3 py-2 text-sm text-neutral-700 bg-white focus:outline-none focus:border-primary"
+        className="w-full md:w-64 border border-neutral-300 rounded-md px-3 py-2 text-sm text-neutral-700 bg-white focus:outline-none focus:border-primary"
       />
 
       {loading ? (
@@ -290,9 +290,11 @@ export default function AgendaPage() {
           <p className="text-xs font-semibold text-neutral-500 border-b border-neutral-200 pb-2">
             {bookings.length} agendamento{bookings.length > 1 ? "s" : ""}
           </p>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
           {bookings.map((b) => (
             <BookingCard key={b.id} b={b} onCancel={handleCancel} />
           ))}
+          </div>
         </div>
       )}
     </div>
