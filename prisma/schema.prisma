@@ -60,6 +60,7 @@ model Booking {
   endTime         DateTime
   cancelToken     String        @unique
   status          BookingStatus @default(CONFIRMED)
+  reason          String?
   createdAt       DateTime      @default(now())
 
   establishment Establishment @relation(fields: [establishmentId], references: [id], onDelete: Cascade)
