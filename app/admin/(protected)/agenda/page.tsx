@@ -250,28 +250,64 @@ export default function AgendaPage() {
     setBookings((prev) => prev.filter((b) => b.id !== id))
   }
 
+  const todayStr = today.toISOString().split("T")[0]
   const dateLabel = new Date(`${date}T12:00`).toLocaleDateString("pt-BR", {
     weekday: "long", day: "numeric", month: "long",
   })
 
+  const shiftDay = (delta: number) => {
+    const d = new Date(`${date}T12:00`)
+    d.setDate(d.getDate() + delta)
+    setDate(d.toISOString().split("T")[0])
+  }
+
   return (
-    <div className="p-4 md:p-8 max-w-5xl flex flex-col gap-4">
+    <div className="p-4 md:p-8 max-w-5xl w-full flex flex-col gap-4">
       <div className="flex items-center gap-3">
         <h1 className="text-lg font-bold text-neutral-900">Agenda</h1>
-        {date === today.toISOString().split("T")[0] && (
+        {date === todayStr && (
           <span className="bg-primary-light text-primary-dark text-xs font-semibold px-2 py-1 rounded-full">
             Hoje
           </span>
         )}
       </div>
-      <p className="text-sm text-neutral-500 capitalize -mt-2">{dateLabel}</p>
 
-      <input
-        type="date"
-        value={date}
-        onChange={(e) => setDate(e.target.value)}
-        className="w-full md:w-64 border border-neutral-300 rounded-md px-3 py-2 text-sm text-neutral-700 bg-white focus:outline-none focus:border-primary"
-      />
+      {/* Navegação de data — botões no mobile, input no desktop */}
+      <div className="flex items-center gap-2">
+        <button
+          onClick={() => shiftDay(-1)}
+          className="w-9 h-9 flex items-center justify-center rounded-lg border border-neutral-300 text-neutral-500 hover:border-primary hover:text-primary transition-colors shrink-0"
+        >
+          ‹
+        </button>
+        <div className="flex-1 min-w-0">
+          {/* Mobile: texto clicável que abre o input nativo escondido */}
+          <div className="relative md:hidden">
+            <div className="border border-neutral-300 rounded-md px-3 py-2 text-sm text-neutral-700 bg-white text-center capitalize truncate">
+              {dateLabel}
+            </div>
+            <input
+              type="date"
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
+              className="absolute inset-0 opacity-0 w-full h-full cursor-pointer"
+            />
+          </div>
+          {/* Desktop: input normal */}
+          <input
+            type="date"
+            value={date}
+            onChange={(e) => setDate(e.target.value)}
+            className="hidden md:block w-full border border-neutral-300 rounded-md px-3 py-2 text-sm text-neutral-700 bg-white focus:outline-none focus:border-primary"
+          />
+        </div>
+        <button
+          onClick={() => shiftDay(1)}
+          className="w-9 h-9 flex items-center justify-center rounded-lg border border-neutral-300 text-neutral-500 hover:border-primary hover:text-primary transition-colors shrink-0"
+        >
+          ›
+        </button>
+      </div>
 
       {loading ? (
         <div className="flex flex-col gap-3">
