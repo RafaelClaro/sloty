@@ -59,19 +59,20 @@ describe("getAvailableSlots", () => {
   })
 
   it("slot no passado não aparece na grade", async () => {
-    const today = new Date()
-    today.setUTCHours(12, 0, 0, 0)
+    // Data fixa e distante no passado — garante que o expediente já
+    // encerrou independentemente da hora real em que o teste roda
+    // (evita flakiness por causa do horário de execução do CI).
+    const pastDate = new Date(Date.UTC(2020, 0, 1, 12, 0, 0))
 
     mockPrisma.availability.findFirst.mockResolvedValue({
-      dayOfWeek: today.getUTCDay(), startTime: "00:00", endTime: "01:00", active: true,
+      dayOfWeek: pastDate.getUTCDay(), startTime: "00:00", endTime: "23:59", active: true,
     })
     mockPrisma.service.findUnique.mockResolvedValue({ durationMinutes: 60 })
     mockPrisma.booking.findMany.mockResolvedValue([])
     mockPrisma.blockedTime.findMany.mockResolvedValue([])
 
-    const slots = await getAvailableSlots("est-1", "svc-1", today)
+    const slots = await getAvailableSlots("est-1", "svc-1", pastDate)
 
-    // Expediente 00:00-01:00 BRT já passou há muito tempo
     expect(slots.every((s) => s.available === false)).toBe(true)
   })
 
