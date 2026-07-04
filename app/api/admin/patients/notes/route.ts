@@ -7,27 +7,36 @@ export async function GET(request: NextRequest) {
   const session = await getServerSession(authOptions)
   if (!session) return NextResponse.json({ error: "Não autorizado" }, { status: 401 })
 
-  const phone = new URL(request.url).searchParams.get("phone")
-  if (!phone) return NextResponse.json({ error: "phone obrigatório" }, { status: 400 })
+  const bookingId = new URL(request.url).searchParams.get("bookingId")
+  if (!bookingId) return NextResponse.json({ error: "bookingId obrigatório" }, { status: 400 })
 
-  const note = await prisma.patientNote.findUnique({
-    where: { establishmentId_clientPhone: { establishmentId: session.user.establishmentId, clientPhone: phone } },
+  const booking = await prisma.booking.findFirst({
+    where: { id: bookingId, establishmentId: session.user.establishmentId },
+    select: { notes: true },
   })
 
-  return NextResponse.json({ notes: note?.notes ?? "" })
+  if (!booking) return NextResponse.json({ error: "Não encontrado" }, { status: 404 })
+
+  return NextResponse.json({ notes: booking.notes ?? "" })
 }
 
 export async function PUT(request: NextRequest) {
   const session = await getServerSession(authOptions)
   if (!session) return NextResponse.json({ error: "Não autorizado" }, { status: 401 })
 
-  const { phone, notes } = await request.json()
-  if (!phone) return NextResponse.json({ error: "phone obrigatório" }, { status: 400 })
+  const { bookingId, notes } = await request.json()
+  if (!bookingId) return NextResponse.json({ error: "bookingId obrigatório" }, { status: 400 })
 
-  await prisma.patientNote.upsert({
-    where: { establishmentId_clientPhone: { establishmentId: session.user.establishmentId, clientPhone: phone } },
-    create: { establishmentId: session.user.establishmentId, clientPhone: phone, notes: notes ?? "" },
-    update: { notes: notes ?? "" },
+  const booking = await prisma.booking.findFirst({
+    where: { id: bookingId, establishmentId: session.user.establishmentId },
+    select: { id: true },
+  })
+
+  if (!booking) return NextResponse.json({ error: "Não encontrado" }, { status: 404 })
+
+  await prisma.booking.update({
+    where: { id: bookingId },
+    data: { notes: notes ?? "" },
   })
 
   return NextResponse.json({ ok: true })

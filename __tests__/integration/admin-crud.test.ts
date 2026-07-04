@@ -296,34 +296,48 @@ describe("/api/admin/bookings/[id]", () => {
 })
 
 describe("/api/admin/patients/notes", () => {
-  const phone = "11955554444"
+  let bookingForNotes: { id: string }
+
+  beforeAll(async () => {
+    bookingForNotes = await prisma.booking.create({
+      data: {
+        establishmentId: establishmentA.id,
+        serviceId: serviceAId,
+        clientName: "Paciente Notas",
+        clientPhone: "11933332222",
+        startTime: new Date("2099-08-01T10:00:00.000Z"),
+        endTime: new Date("2099-08-01T10:30:00.000Z"),
+        cancelToken: "NOTES001",
+        status: "CONFIRMED",
+      },
+    })
+  })
 
   it("GET retorna string vazia quando não há nota", async () => {
     mockedGetServerSession.mockResolvedValue(sessionFor(establishmentA.id, establishmentA.slug))
-    const req = new NextRequest(`http://localhost/api/admin/patients/notes?phone=${phone}`)
+    const req = new NextRequest(`http://localhost/api/admin/patients/notes?bookingId=${bookingForNotes.id}`)
     const res = await getNotes(req)
     const data = await res.json()
     expect(res.status).toBe(200)
     expect(data.notes).toBe("")
   })
 
-  it("PUT cria nota e GET retorna o conteúdo salvo", async () => {
+  it("PUT salva nota e GET retorna o conteúdo", async () => {
     mockedGetServerSession.mockResolvedValue(sessionFor(establishmentA.id, establishmentA.slug))
-    const putReq = jsonRequest("http://localhost/api/admin/patients/notes", "PUT", { phone, notes: "15/07 · retorno positivo" })
+    const putReq = jsonRequest("http://localhost/api/admin/patients/notes", "PUT", { bookingId: bookingForNotes.id, notes: "15/07 · retorno positivo" })
     const putRes = await putNotes(putReq)
     expect(putRes.status).toBe(200)
 
-    const getReq = new NextRequest(`http://localhost/api/admin/patients/notes?phone=${phone}`)
+    const getReq = new NextRequest(`http://localhost/api/admin/patients/notes?bookingId=${bookingForNotes.id}`)
     const getRes = await getNotes(getReq)
     const data = await getRes.json()
     expect(data.notes).toBe("15/07 · retorno positivo")
   })
 
-  it("notas de um estabelecimento não vazam para outro", async () => {
+  it("notas de booking de outro estabelecimento retornam 404", async () => {
     mockedGetServerSession.mockResolvedValue(sessionFor(establishmentB.id, establishmentB.slug))
-    const req = new NextRequest(`http://localhost/api/admin/patients/notes?phone=${phone}`)
+    const req = new NextRequest(`http://localhost/api/admin/patients/notes?bookingId=${bookingForNotes.id}`)
     const res = await getNotes(req)
-    const data = await res.json()
-    expect(data.notes).toBe("")
+    expect(res.status).toBe(404)
   })
 })
