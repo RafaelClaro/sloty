@@ -8,6 +8,7 @@ import { GET as getAvailabilityRules, PUT as putAvailabilityRules } from "@/app/
 import { GET as getEstablishment, PATCH as patchEstablishment } from "@/app/api/admin/establishment/route"
 import { PATCH as patchBooking } from "@/app/api/admin/bookings/[id]/route"
 import { GET as getHistory } from "@/app/api/admin/bookings/history/route"
+import { GET as getNotes, PUT as putNotes } from "@/app/api/admin/patients/notes/route"
 
 vi.mock("next-auth", () => ({
   getServerSession: vi.fn(),
@@ -291,5 +292,38 @@ describe("/api/admin/bookings/[id]", () => {
 
     const untouched = await prisma.booking.findUnique({ where: { id: booking.id } })
     expect(untouched?.status).toBe("CONFIRMED")
+  })
+})
+
+describe("/api/admin/patients/notes", () => {
+  const phone = "11955554444"
+
+  it("GET retorna string vazia quando não há nota", async () => {
+    mockedGetServerSession.mockResolvedValue(sessionFor(establishmentA.id, establishmentA.slug))
+    const req = new NextRequest(`http://localhost/api/admin/patients/notes?phone=${phone}`)
+    const res = await getNotes(req)
+    const data = await res.json()
+    expect(res.status).toBe(200)
+    expect(data.notes).toBe("")
+  })
+
+  it("PUT cria nota e GET retorna o conteúdo salvo", async () => {
+    mockedGetServerSession.mockResolvedValue(sessionFor(establishmentA.id, establishmentA.slug))
+    const putReq = jsonRequest("http://localhost/api/admin/patients/notes", "PUT", { phone, notes: "15/07 · retorno positivo" })
+    const putRes = await putNotes(putReq)
+    expect(putRes.status).toBe(200)
+
+    const getReq = new NextRequest(`http://localhost/api/admin/patients/notes?phone=${phone}`)
+    const getRes = await getNotes(getReq)
+    const data = await getRes.json()
+    expect(data.notes).toBe("15/07 · retorno positivo")
+  })
+
+  it("notas de um estabelecimento não vazam para outro", async () => {
+    mockedGetServerSession.mockResolvedValue(sessionFor(establishmentB.id, establishmentB.slug))
+    const req = new NextRequest(`http://localhost/api/admin/patients/notes?phone=${phone}`)
+    const res = await getNotes(req)
+    const data = await res.json()
+    expect(data.notes).toBe("")
   })
 })

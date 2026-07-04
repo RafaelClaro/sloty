@@ -21,6 +21,7 @@ model Establishment {
   availability    Availability[]
   bookings        Booking[]
   blockedTimes    BlockedTime[]
+  patientNotes    PatientNote[]
   adminUser       User?
 }
 
@@ -84,6 +85,18 @@ model User {
   passwordHash    String
 
   establishment Establishment @relation(fields: [establishmentId], references: [id], onDelete: Cascade)
+}
+
+model PatientNote {
+  id              String   @id @default(cuid())
+  establishmentId String
+  clientPhone     String
+  notes           String   @default("")
+  updatedAt       DateTime @updatedAt
+
+  establishment Establishment @relation(fields: [establishmentId], references: [id], onDelete: Cascade)
+
+  @@unique([establishmentId, clientPhone])
 }
 
 enum BookingStatus {
