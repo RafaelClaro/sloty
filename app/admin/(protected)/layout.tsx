@@ -12,8 +12,8 @@ export default async function AdminLayout({ children }: { children: ReactNode })
   return (
     <div className="min-h-screen bg-neutral-50 flex">
       <Sidebar />
-      <div className="flex-1 flex flex-col min-h-screen">
-        <main className="flex-1 pb-20 md:pb-0 overflow-auto">
+      <div className="flex-1 min-w-0 flex flex-col min-h-screen">
+        <main className="flex-1 pb-20 md:pb-0 overflow-x-hidden">
           {children}
         </main>
         <BottomNav />
