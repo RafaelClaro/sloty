@@ -133,7 +133,14 @@ export default function ServicosPage() {
         </div>
       ) : services.length === 0 ? (
         <EmptyState
-          icon={<span className="text-5xl">📋</span>}
+          icon={
+            <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="#D1D5DB" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2" />
+              <rect x="9" y="3" width="6" height="4" rx="1" />
+              <line x1="9" y1="12" x2="15" y2="12" />
+              <line x1="9" y1="16" x2="13" y2="16" />
+            </svg>
+          }
           title="Nenhum serviço cadastrado"
           hint="Adicione seus serviços para começar a receber agendamentos."
           cta={{ label: "Adicionar serviço", onClick: () => setShowForm(true) }}

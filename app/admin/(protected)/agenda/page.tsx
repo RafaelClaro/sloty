@@ -281,7 +281,14 @@ export default function AgendaPage() {
         </div>
       ) : bookings.length === 0 ? (
         <EmptyState
-          icon={<span className="text-5xl">📅</span>}
+          icon={
+            <svg width="52" height="52" viewBox="0 0 24 24" fill="none" stroke="#D1D5DB" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="3" y="4" width="18" height="18" rx="2" />
+              <line x1="16" y1="2" x2="16" y2="6" />
+              <line x1="8" y1="2" x2="8" y2="6" />
+              <line x1="3" y1="10" x2="21" y2="10" />
+            </svg>
+          }
           title="Nenhum agendamento"
           hint="Compartilhe seu link para receber agendamentos."
         />
