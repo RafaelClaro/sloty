@@ -13,7 +13,7 @@ const items = [
 export function BottomNav() {
   const pathname = usePathname()
   return (
-    <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-neutral-300 flex max-w-md mx-auto w-full">
+    <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-neutral-300 flex">
       {items.map((item) => {
         const active = pathname.startsWith(item.href)
         return (
