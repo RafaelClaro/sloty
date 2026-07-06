@@ -102,36 +102,11 @@ export default async function ServicesPage({ params }: { params: Promise<{ slug:
         ))}
 
         {/* Atendimento online — informativo */}
-        <div
-          className="flex items-center"
-          style={{
-            background: "#ffffff",
-            border: "1px solid #E9EDE9",
-            borderRadius: 18,
-            padding: "16px 14px",
-            boxShadow: "0 1px 4px rgba(0,0,0,0.04)",
-            gap: 12,
-          }}
-        >
-          <div
-            className="shrink-0 flex items-center justify-center"
-            style={{
-              width: 46,
-              height: 46,
-              borderRadius: 14,
-              background: "#FFF1F2",
-              fontSize: 22,
-            }}
-          >
-            📍
-          </div>
-          <div className="min-w-0 flex-1">
-            <p className="font-semibold text-neutral-900" style={{ fontSize: 15 }}>
-              Atendimento online
-            </p>
-            <p className="text-neutral-400 mt-0.5" style={{ fontSize: 12 }}>
-              Consultas realizadas por videochamada
-            </p>
+        <div className="flex items-center gap-2 px-1 pt-1">
+          <span className="text-lg">💻</span>
+          <div>
+            <p className="text-sm font-semibold text-neutral-700">Atendimento online</p>
+            <p className="text-xs text-neutral-400">Consultas realizadas por videochamada</p>
           </div>
         </div>
       </div>
