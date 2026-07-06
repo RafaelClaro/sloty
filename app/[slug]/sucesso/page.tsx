@@ -30,7 +30,7 @@ export default async function SucessoPage({
       </div>
 
       <div>
-        <h2 className="text-xl font-bold text-neutral-900">Consulta confirmada!</h2>
+        <h2 className="text-xl font-bold text-neutral-900">Agendamento confirmado!</h2>
         <p className="text-sm text-neutral-500 mt-1">{decodeURIComponent(service)}</p>
       </div>
 
