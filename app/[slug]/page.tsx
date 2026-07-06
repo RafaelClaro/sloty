@@ -57,7 +57,7 @@ export default async function ServicesPage({ params }: { params: Promise<{ slug:
                 fontSize: 22,
               }}
             >
-              🩺
+              ✦
             </div>
 
             {/* Info */}
