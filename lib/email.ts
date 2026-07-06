@@ -217,6 +217,7 @@ export async function sendBookingConfirmationToClient({
   })
 
   const cancelUrl = `${APP_URL}/${establishmentSlug}/cancelar`
+  const icsUrl = `${APP_URL}/api/calendar/${cancelToken}`
 
   try {
     const resend = new Resend(process.env.RESEND_API_KEY)
@@ -257,15 +258,25 @@ export async function sendBookingConfirmationToClient({
     <p class="em-muted" style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;margin:20px 0 8px;color:#6B7280;">
       Adicionar à agenda
     </p>
-    <a href="${googleCalendarUrl}" target="_blank"
-       style="display:block;text-align:center;background:#2D6A4F;color:#fff;
-              text-decoration:none;font-size:13px;font-weight:600;padding:10px 16px;border-radius:8px;">
-      Adicionar ao Google Calendar
-    </a>
-    <p class="em-muted" style="font-size:12px;margin-top:8px;color:#6B7280;">
-      Usa iPhone/Mac? Abra o arquivo anexo (<strong>agendamento.ics</strong>) para adicionar ao Calendário da Apple — também funciona com Outlook.
-    </p>
-    <div class="em-cbox" style="background:#F9FAF8;border:1px solid #D1D5DB;border-radius:8px;padding:14px;text-align:center;margin-top:20px;">
+    <table style="width:100%;border-collapse:separate;border-spacing:0 8px;">
+      <tr>
+        <td style="padding-right:4px;">
+          <a href="${googleCalendarUrl}" target="_blank"
+             style="display:block;text-align:center;background:#2D6A4F;color:#fff;
+                    text-decoration:none;font-size:13px;font-weight:600;padding:10px 12px;border-radius:8px;">
+            Google Calendar
+          </a>
+        </td>
+        <td style="padding-left:4px;">
+          <a href="${icsUrl}" target="_blank"
+             style="display:block;text-align:center;background:#1c1c1e;color:#fff;
+                    text-decoration:none;font-size:13px;font-weight:600;padding:10px 12px;border-radius:8px;">
+            Apple Calendar
+          </a>
+        </td>
+      </tr>
+    </table>
+    <div class="em-cbox" style="background:#F9FAF8;border:1px solid #D1D5DB;border-radius:8px;padding:14px;text-align:center;margin-top:12px;">
       <p class="em-muted" style="font-size:11px;margin:0;color:#6B7280;">Código para cancelar</p>
       <p class="em-ccode" style="font-size:20px;font-weight:700;letter-spacing:0.15em;margin:4px 0;color:#1A1A2E;">${cancelToken}</p>
       <a href="${cancelUrl}" class="em-clink" style="font-size:12px;color:#2D6A4F;font-weight:600;">
