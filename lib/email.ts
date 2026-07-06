@@ -177,6 +177,7 @@ export async function notifyEstablishmentNewBooking({
         {
           filename: "agendamento.ics",
           content: Buffer.from(ics.replace(/^﻿/, ""), "utf-8"),
+          content_type: "text/calendar; charset=utf-8; method=PUBLISH",
         },
       ],
     })
@@ -298,6 +299,7 @@ export async function sendBookingConfirmationToClient({
         {
           filename: "agendamento.ics",
           content: Buffer.from(ics.replace(/^﻿/, ""), "utf-8"),
+          content_type: "text/calendar; charset=utf-8; method=PUBLISH",
         },
       ],
     })
