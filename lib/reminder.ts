@@ -13,6 +13,19 @@ interface SendBookingReminderParams {
   cancelToken: string
 }
 
+const DARK_MODE_CSS = `
+@media (prefers-color-scheme: dark) {
+  .em-bg   { background-color: #0f172a !important; }
+  .em-card { background-color: #1e293b !important; border-color: #334155 !important; }
+  .em-main { color: #f1f5f9 !important; }
+  .em-label { color: #94a3b8 !important; }
+  .em-muted { color: #64748b !important; }
+  .em-cancel-box { background-color: #0f172a !important; border-color: #334155 !important; }
+  .em-cancel-code { color: #f1f5f9 !important; }
+  .em-cancel-link { color: #4ade80 !important; }
+}
+`
+
 /**
  * Envia lembrete D-1 ao cliente sobre sua consulta do dia seguinte.
  * Chamado pelo cron diário em app/api/cron/lembretes/route.ts.
@@ -41,37 +54,52 @@ export async function sendBookingReminder({
   const { error } = await resend.emails.send({
     from: FROM_EMAIL,
     to: toEmail,
-    subject: `⏰ Seu agendamento é amanhã, ${dateLabel}`,
-    html: `
-      <div style="font-family: -apple-system, sans-serif; max-width: 480px; margin: 0 auto;">
-        <div style="background: #2D6A4F; padding: 20px; border-radius: 12px 12px 0 0;">
-          <h1 style="color: #fff; font-size: 18px; margin: 0;">Seu agendamento é amanhã!</h1>
-          <p style="color: rgba(255,255,255,0.8); font-size: 13px; margin: 4px 0 0;">${establishmentName}</p>
-        </div>
-        <div style="border: 1px solid #D1D5DB; border-top: none; border-radius: 0 0 12px 12px; padding: 20px;">
-          <p style="font-size: 14px; color: #1A1A2E;">Olá, ${clientName}!</p>
-          <p style="font-size: 14px; color: #1A1A2E;">
-            Passando para lembrar que sua consulta é <strong>amanhã</strong>:
-          </p>
-          <table style="width: 100%; font-size: 14px; color: #1A1A2E; margin-top: 8px;">
-            <tr><td style="padding: 6px 0; color: #6B7280;">Serviço</td><td style="padding: 6px 0; font-weight: 600;">${serviceName}</td></tr>
-            <tr><td style="padding: 6px 0; color: #6B7280;">Data</td><td style="padding: 6px 0; font-weight: 600;">${dateLabel}</td></tr>
-            <tr><td style="padding: 6px 0; color: #6B7280;">Horário</td><td style="padding: 6px 0; font-weight: 600;">${timeLabel}</td></tr>
-          </table>
-
-          <div style="background: #F9FAF8; border: 1px solid #D1D5DB; border-radius: 8px;
-                      padding: 14px; text-align: center; margin-top: 20px;">
-            <p style="font-size: 11px; color: #6B7280; margin: 0;">Código para cancelar</p>
-            <p style="font-size: 20px; font-weight: 700; color: #1A1A2E; letter-spacing: 0.15em; margin: 4px 0;">
-              ${cancelToken}
-            </p>
-            <a href="${cancelUrl}" style="font-size: 12px; color: #2D6A4F; font-weight: 600;">
-              Cancelar este agendamento
-            </a>
-          </div>
-        </div>
-      </div>
-    `,
+    subject: `Seu agendamento é amanhã, ${dateLabel}`,
+    html: `<!DOCTYPE html>
+<html>
+<head>
+<meta name="color-scheme" content="light dark">
+<meta name="supported-color-schemes" content="light dark">
+<style>${DARK_MODE_CSS}</style>
+</head>
+<body style="margin:0;padding:16px;background:#f8fafc;" class="em-bg">
+<div style="font-family:-apple-system,sans-serif;max-width:480px;margin:0 auto;">
+  <div style="background:#2D6A4F;padding:20px;border-radius:12px 12px 0 0;">
+    <h1 style="color:#fff;font-size:18px;margin:0;">Seu agendamento é amanhã!</h1>
+    <p style="color:rgba(255,255,255,0.8);font-size:13px;margin:4px 0 0;">${establishmentName}</p>
+  </div>
+  <div class="em-card" style="background:#ffffff;border:1px solid #D1D5DB;border-top:none;border-radius:0 0 12px 12px;padding:20px;">
+    <p style="font-size:14px;margin:0 0 4px;" class="em-main">
+      <span style="color:#1A1A2E;">Olá, ${clientName}!</span>
+    </p>
+    <p style="font-size:14px;margin:0 0 8px;" class="em-main">
+      <span style="color:#1A1A2E;">Passando para lembrar que sua consulta é <strong>amanhã</strong>:</span>
+    </p>
+    <table style="width:100%;font-size:14px;border-collapse:collapse;">
+      <tr>
+        <td style="padding:6px 0;width:80px;" class="em-label"><span style="color:#6B7280;">Serviço</span></td>
+        <td style="padding:6px 0;font-weight:600;" class="em-main"><span style="color:#1A1A2E;">${serviceName}</span></td>
+      </tr>
+      <tr>
+        <td style="padding:6px 0;" class="em-label"><span style="color:#6B7280;">Data</span></td>
+        <td style="padding:6px 0;font-weight:600;" class="em-main"><span style="color:#1A1A2E;">${dateLabel}</span></td>
+      </tr>
+      <tr>
+        <td style="padding:6px 0;" class="em-label"><span style="color:#6B7280;">Horário</span></td>
+        <td style="padding:6px 0;font-weight:600;" class="em-main"><span style="color:#1A1A2E;">${timeLabel}</span></td>
+      </tr>
+    </table>
+    <div class="em-cancel-box" style="background:#F9FAF8;border:1px solid #D1D5DB;border-radius:8px;padding:14px;text-align:center;margin-top:20px;">
+      <p style="font-size:11px;margin:0;" class="em-muted"><span style="color:#6B7280;">Código para cancelar</span></p>
+      <p style="font-size:20px;font-weight:700;letter-spacing:0.15em;margin:4px 0;" class="em-cancel-code"><span style="color:#1A1A2E;">${cancelToken}</span></p>
+      <a href="${cancelUrl}" style="font-size:12px;color:#2D6A4F;font-weight:600;" class="em-cancel-link">
+        Cancelar este agendamento
+      </a>
+    </div>
+  </div>
+</div>
+</body>
+</html>`,
   })
 
   if (error) {
