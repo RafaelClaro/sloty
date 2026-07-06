@@ -9,7 +9,7 @@ export async function GET() {
 
   const establishment = await prisma.establishment.findUnique({
     where: { id: session.user.establishmentId },
-    select: { name: true, notifyEmail: true, phone: true, slug: true, meetLink: true },
+    select: { name: true, notifyEmail: true, phone: true, slug: true },
   })
 
   return NextResponse.json({ establishment })
@@ -20,12 +20,12 @@ export async function PATCH(request: NextRequest) {
   if (!session) return NextResponse.json({ error: "Não autorizado" }, { status: 401 })
 
   const body = await request.json()
-  const { notifyEmail, meetLink } = body
+  const { notifyEmail } = body
 
   await prisma.establishment.update({
     where: { id: session.user.establishmentId },
-    data: { notifyEmail, meetLink },
+    data: { notifyEmail },
   })
 
-  return NextResponse.json({ message: "Configurações atualizadas" })
+  return NextResponse.json({ message: "Email de notificação atualizado" })
 }
