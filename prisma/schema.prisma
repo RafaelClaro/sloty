@@ -14,7 +14,6 @@ model Establishment {
   phone       String?
   notifyEmail String?
   timezone    String   @default("America/Sao_Paulo")
-  meetLink    String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
