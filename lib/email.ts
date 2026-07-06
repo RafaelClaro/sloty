@@ -16,6 +16,7 @@ interface NotifyNewBookingParams {
   endTime: Date
   bookingId: string
   reason?: string
+  meetLink?: string
 }
 
 interface ConfirmationToClientParams {
@@ -73,6 +74,7 @@ export async function notifyEstablishmentNewBooking({
   endTime,
   bookingId,
   reason,
+  meetLink,
 }: NotifyNewBookingParams) {
   if (!toEmail) return
 
@@ -146,6 +148,7 @@ export async function notifyEstablishmentNewBooking({
         <td class="em-main" style="padding:6px 0;font-weight:600;color:#1A1A2E;">${timeLabel}</td>
       </tr>
       ${reason ? `<tr><td class="em-label" style="padding:6px 0;vertical-align:top;color:#6B7280;">Motivo</td><td class="em-italic" style="padding:6px 0;font-style:italic;color:#374151;">${reason}</td></tr>` : ""}
+      ${meetLink ? `<tr><td class="em-label" style="padding:6px 0;color:#6B7280;">Videochamada</td><td style="padding:6px 0;"><a href="${meetLink}" style="color:#2D6A4F;">${meetLink}</a></td></tr>` : ""}
     </table>
     <p class="em-muted" style="font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.05em;margin:20px 0 8px;color:#6B7280;">
       Adicionar à agenda

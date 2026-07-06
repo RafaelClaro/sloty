@@ -83,6 +83,7 @@ export async function POST(
           endTime: booking.endTime,
           bookingId: booking.id,
           reason: booking.reason ?? undefined,
+          meetLink: establishment.meetLink ?? undefined,
         }).catch((err) => console.error("[email notify]", err))
       )
     }

@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/Input"
 export default function ConfigPage() {
   const [notifyEmail, setNotifyEmail] = useState("")
   const [notifyEnabled, setNotifyEnabled] = useState(true)
+  const [meetLink, setMeetLink] = useState("")
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
@@ -19,6 +20,7 @@ export default function ConfigPage() {
         const email = data.establishment?.notifyEmail ?? ""
         setNotifyEmail(email)
         setNotifyEnabled(!!email)
+        setMeetLink(data.establishment?.meetLink ?? "")
       })
       .finally(() => setLoading(false))
   }, [])
@@ -33,7 +35,10 @@ export default function ConfigPage() {
     await fetch("/api/admin/establishment", {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ notifyEmail: notifyEnabled ? notifyEmail || null : null }),
+      body: JSON.stringify({
+        notifyEmail: notifyEnabled ? notifyEmail || null : null,
+        meetLink: meetLink || null,
+      }),
     })
     setSaving(false)
     setSaved(true)
@@ -80,6 +85,28 @@ export default function ConfigPage() {
           )
         )}
 
+        <Button variant="primary" size="lg" loading={saving} onClick={handleSave}>
+          {saved ? "✓ Salvo!" : "Salvar"}
+        </Button>
+      </div>
+
+      <div className="bg-neutral-100 border border-neutral-300 rounded-md p-4 flex flex-col gap-4">
+        <div>
+          <p className="text-sm font-semibold text-neutral-900">Link da videochamada</p>
+          <p className="text-xs text-neutral-500 mt-1">
+            Quando preenchido, aparece automaticamente na página de agendamento e nos emails de confirmação.
+          </p>
+        </div>
+        {loading ? (
+          <div className="h-10 rounded-md bg-neutral-200 animate-pulse" />
+        ) : (
+          <Input
+            label="Link da videochamada"
+            value={meetLink}
+            onChange={(e) => setMeetLink(e.target.value)}
+            placeholder="Ex: meet.google.com/xxx-yyy ou zoom.us/j/123456"
+          />
+        )}
         <Button variant="primary" size="lg" loading={saving} onClick={handleSave}>
           {saved ? "✓ Salvo!" : "Salvar"}
         </Button>
