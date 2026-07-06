@@ -102,12 +102,9 @@ export default async function ServicesPage({ params }: { params: Promise<{ slug:
         ))}
 
         {/* Atendimento online — informativo */}
-        <div className="flex items-center gap-2 px-1 pt-1">
-          <span className="text-lg">💻</span>
-          <div>
-            <p className="text-sm font-semibold text-neutral-700">Atendimento online</p>
-            <p className="text-xs text-neutral-400">Consultas realizadas por videochamada</p>
-          </div>
+        <div className="flex items-center justify-center gap-1.5 pt-1 text-neutral-400">
+          <span className="text-sm">💻</span>
+          <p className="text-xs">Consultas realizadas por videochamada</p>
         </div>
       </div>
     </>
