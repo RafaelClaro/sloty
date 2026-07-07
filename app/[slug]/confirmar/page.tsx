@@ -103,20 +103,20 @@ function ConfirmarContent() {
       {/* Card de resumo */}
       <div
         style={{
-          background: "#F0FDF4",
-          border: "1px solid #D1FAE5",
+          background: "var(--color-primary-light)",
+          border: "1px solid color-mix(in srgb, var(--color-primary) 25%, transparent)",
           borderRadius: 12,
           padding: "12px 14px",
         }}
       >
         <div className="flex items-start justify-between">
           <div className="flex flex-col gap-0.5 min-w-0 flex-1">
-            <p style={{ fontSize: 14, fontWeight: 500, color: "#14532D" }}>{serviceName}</p>
+            <p style={{ fontSize: 14, fontWeight: 500, color: "var(--color-primary-dark)" }}>{serviceName}</p>
             {serviceLabel && (
-              <p style={{ fontSize: 12, color: "#52B788" }}>{serviceLabel}</p>
+              <p style={{ fontSize: 12, color: "var(--color-primary)" }}>{serviceLabel}</p>
             )}
             {dateTimeFormatted && (
-              <p style={{ fontSize: 12, fontWeight: 500, color: "#2D6A4F" }}>{dateTimeFormatted}</p>
+              <p style={{ fontSize: 12, fontWeight: 500, color: "var(--color-primary)" }}>{dateTimeFormatted}</p>
             )}
           </div>
           <button
@@ -136,7 +136,7 @@ function ConfirmarContent() {
           value={name}
           onChange={(e) => setName(e.target.value)}
           placeholder="Maria da Silva"
-          onFocus={(e) => { e.target.style.background = "#E9FAF0"; e.target.style.boxShadow = "0 0 0 2px #74C69D" }}
+          onFocus={(e) => { e.target.style.background = "var(--color-primary-light)"; e.target.style.boxShadow = "0 0 0 2px var(--color-primary)" }}
           onBlur={(e) => { e.target.style.background = "#F3F4F6"; e.target.style.boxShadow = "none" }}
         />
         {errors.name && <span style={{ fontSize: 12, color: "#EF4444", marginTop: 2, display: "block" }}>{errors.name}</span>}
@@ -151,7 +151,7 @@ function ConfirmarContent() {
           value={phone}
           onChange={(e) => setPhone(formatPhone(e.target.value))}
           placeholder="(11) 00000-0000"
-          onFocus={(e) => { e.target.style.background = "#E9FAF0"; e.target.style.boxShadow = "0 0 0 2px #74C69D" }}
+          onFocus={(e) => { e.target.style.background = "var(--color-primary-light)"; e.target.style.boxShadow = "0 0 0 2px var(--color-primary)" }}
           onBlur={(e) => { e.target.style.background = "#F3F4F6"; e.target.style.boxShadow = "none" }}
         />
         {errors.phone && <span style={{ fontSize: 12, color: "#EF4444", marginTop: 2, display: "block" }}>{errors.phone}</span>}
@@ -169,7 +169,7 @@ function ConfirmarContent() {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           placeholder="maria@exemplo.com"
-          onFocus={(e) => { e.target.style.background = "#E9FAF0"; e.target.style.boxShadow = "0 0 0 2px #74C69D" }}
+          onFocus={(e) => { e.target.style.background = "var(--color-primary-light)"; e.target.style.boxShadow = "0 0 0 2px var(--color-primary)" }}
           onBlur={(e) => { e.target.style.background = "#F3F4F6"; e.target.style.boxShadow = "none" }}
         />
         {errors.email && <span style={{ fontSize: 12, color: "#EF4444", marginTop: 2, display: "block" }}>{errors.email}</span>}
@@ -195,7 +195,7 @@ function ConfirmarContent() {
               lineHeight: 1.5,
               paddingBottom: 24,
             }}
-            onFocus={(e) => { e.target.style.background = "#E9FAF0"; e.target.style.boxShadow = "0 0 0 2px #74C69D" }}
+            onFocus={(e) => { e.target.style.background = "var(--color-primary-light)"; e.target.style.boxShadow = "0 0 0 2px var(--color-primary)" }}
             onBlur={(e) => { e.target.style.background = "#F3F4F6"; e.target.style.boxShadow = "none" }}
           />
           <span
@@ -229,7 +229,7 @@ function ConfirmarContent() {
         onClick={handleSubmit}
         disabled={loading}
         style={{
-          background: loading ? "#52B788" : "#2D6A4F",
+          background: loading ? "var(--color-primary-dark)" : "var(--color-primary)",
           color: "#fff",
           borderRadius: 12,
           padding: "13px",
