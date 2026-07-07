@@ -30,8 +30,12 @@ export default function proxy(req: NextRequest) {
   const rewrite = subdomainRewrite(req)
   if (rewrite) return rewrite
 
-  // Auth guard for admin routes
-  return (authMiddleware as (req: NextRequest) => NextResponse)(req)
+  // Auth guard only for admin routes
+  if (req.nextUrl.pathname.startsWith("/admin")) {
+    return (authMiddleware as (req: NextRequest) => NextResponse)(req)
+  }
+
+  return NextResponse.next()
 }
 
 export const config = {
