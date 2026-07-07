@@ -101,6 +101,7 @@ export async function POST(
           endTime: booking.endTime,
           bookingId: booking.id,
           cancelToken: booking.cancelToken,
+          primaryColor: establishment.primaryColor ?? undefined,
         }).catch((err) => console.error("[client confirmation email]", err))
       )
     }
