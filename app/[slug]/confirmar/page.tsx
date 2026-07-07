@@ -121,7 +121,7 @@ function ConfirmarContent() {
           </div>
           <button
             onClick={() => router.push(`/${slug}/agendar?serviceId=${serviceId}&serviceName=${encodeURIComponent(serviceName)}&serviceLabel=${encodeURIComponent(serviceLabel)}`)}
-            style={{ fontSize: 11, color: "#52B788", textDecoration: "underline", marginLeft: 12, flexShrink: 0 }}
+            style={{ fontSize: 11, color: "var(--color-primary)", textDecoration: "underline", marginLeft: 12, flexShrink: 0 }}
           >
             Alterar
           </button>
