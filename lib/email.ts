@@ -29,6 +29,7 @@ interface ConfirmationToClientParams {
   endTime: Date
   bookingId: string
   cancelToken: string
+  primaryColor?: string
 }
 
 function buildGoogleCalendarUrl(params: {
@@ -138,7 +139,7 @@ export async function notifyEstablishmentNewBooking({
       </tr>
       <tr>
         <td class="em-label" style="padding:6px 0;color:#6B7280;">Valor</td>
-        <td class="em-green" style="padding:6px 0;font-weight:600;color:#2D6A4F;">${formatCurrency(servicePrice)}</td>
+        <td class="em-main" style="padding:6px 0;font-weight:600;color:#1A1A2E;">${formatCurrency(servicePrice)}</td>
       </tr>
       <tr>
         <td class="em-label" style="padding:6px 0;color:#6B7280;">Data</td>
@@ -190,7 +191,9 @@ export async function sendBookingConfirmationToClient({
   endTime,
   bookingId,
   cancelToken,
+  primaryColor,
 }: ConfirmationToClientParams) {
+  const headerBg = primaryColor ?? "#2D6A4F"
   console.log("[sendBookingConfirmationToClient] iniciando envio para", toEmail)
   if (!toEmail) return
 
@@ -236,7 +239,7 @@ export async function sendBookingConfirmationToClient({
 </head>
 <body style="margin:0;padding:16px;background:#f8fafc;" class="em-bg">
 <div style="font-family:-apple-system,sans-serif;max-width:480px;margin:0 auto;">
-  <div style="background:#2D6A4F;padding:20px;border-radius:12px 12px 0 0;">
+  <div style="background:${headerBg};padding:20px;border-radius:12px 12px 0 0;">
     <h1 style="color:#fff;font-size:18px;margin:0;">Agendamento confirmado!</h1>
     <p style="color:rgba(255,255,255,0.8);font-size:13px;margin:4px 0 0;">${establishmentName}</p>
   </div>
@@ -265,7 +268,7 @@ export async function sendBookingConfirmationToClient({
       <tr>
         <td style="padding-right:4px;">
           <a href="${googleCalendarUrl}" target="_blank"
-             style="display:block;text-align:center;background:#2D6A4F;color:#fff;
+             style="display:block;text-align:center;background:${headerBg};color:#fff;
                     text-decoration:none;font-size:13px;font-weight:600;padding:10px 12px;border-radius:8px;">
             Google Calendar
           </a>
@@ -282,7 +285,7 @@ export async function sendBookingConfirmationToClient({
     <div class="em-cbox" style="background:#F9FAF8;border:1px solid #D1D5DB;border-radius:8px;padding:14px;text-align:center;margin-top:12px;">
       <p class="em-muted" style="font-size:11px;margin:0;color:#6B7280;">Código para cancelar</p>
       <p class="em-ccode" style="font-size:20px;font-weight:700;letter-spacing:0.15em;margin:4px 0;color:#1A1A2E;">${cancelToken}</p>
-      <a href="${cancelUrl}" class="em-clink" style="font-size:12px;color:#2D6A4F;font-weight:600;">
+      <a href="${cancelUrl}" class="em-clink" style="font-size:12px;color:${headerBg};font-weight:600;">
         Cancelar este agendamento
       </a>
     </div>
