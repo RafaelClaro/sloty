@@ -9,6 +9,7 @@ import { GET as getEstablishment, PATCH as patchEstablishment } from "@/app/api/
 import { PATCH as patchBooking } from "@/app/api/admin/bookings/[id]/route"
 import { GET as getHistory } from "@/app/api/admin/bookings/history/route"
 import { GET as getNotes, PUT as putNotes } from "@/app/api/admin/patients/notes/route"
+import { PATCH as patchPassword } from "@/app/api/admin/password/route"
 
 vi.mock("next-auth", () => ({
   getServerSession: vi.fn(),
@@ -339,5 +340,62 @@ describe("/api/admin/patients/notes", () => {
     const req = new NextRequest(`http://localhost/api/admin/patients/notes?bookingId=${bookingForNotes.id}`)
     const res = await getNotes(req)
     expect(res.status).toBe(404)
+  })
+})
+
+describe("/api/admin/password", () => {
+  let userId: string
+  const initialHash = "$2a$12$testhash" // placeholder — criamos user com bcrypt real abaixo
+
+  beforeAll(async () => {
+    const bcrypt = await import("bcryptjs")
+    const hash = await bcrypt.hash("senhaantiga123", 12)
+    const user = await prisma.user.create({
+      data: {
+        establishmentId: establishmentB.id,
+        email: `pw-test-${Date.now()}@ci.test`,
+        passwordHash: hash,
+      },
+    })
+    userId = user.id
+  })
+
+  afterAll(async () => {
+    await prisma.user.deleteMany({ where: { id: userId } })
+  })
+
+  it("rejeita sem sessão", async () => {
+    mockedGetServerSession.mockResolvedValue(null)
+    const req = jsonRequest("http://localhost/api/admin/password", "PATCH", { currentPassword: "x", newPassword: "y" })
+    const res = await patchPassword(req)
+    expect(res.status).toBe(401)
+  })
+
+  it("rejeita senha atual incorreta", async () => {
+    mockedGetServerSession.mockResolvedValue(sessionFor(establishmentB.id, establishmentB.slug))
+    const req = jsonRequest("http://localhost/api/admin/password", "PATCH", { currentPassword: "errada", newPassword: "novasenha123" })
+    const res = await patchPassword(req)
+    expect(res.status).toBe(400)
+    const data = await res.json()
+    expect(data.error).toMatch(/incorreta/)
+  })
+
+  it("rejeita nova senha com menos de 8 chars", async () => {
+    mockedGetServerSession.mockResolvedValue(sessionFor(establishmentB.id, establishmentB.slug))
+    const req = jsonRequest("http://localhost/api/admin/password", "PATCH", { currentPassword: "senhaantiga123", newPassword: "curta" })
+    const res = await patchPassword(req)
+    expect(res.status).toBe(400)
+    expect((await res.json()).error).toMatch(/8 caracteres/)
+  })
+
+  it("altera senha com sucesso", async () => {
+    mockedGetServerSession.mockResolvedValue(sessionFor(establishmentB.id, establishmentB.slug))
+    const req = jsonRequest("http://localhost/api/admin/password", "PATCH", { currentPassword: "senhaantiga123", newPassword: "novasenha456" })
+    const res = await patchPassword(req)
+    expect(res.status).toBe(200)
+
+    const bcrypt = await import("bcryptjs")
+    const updated = await prisma.user.findUnique({ where: { id: userId } })
+    expect(await bcrypt.compare("novasenha456", updated!.passwordHash)).toBe(true)
   })
 })

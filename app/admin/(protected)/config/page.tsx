@@ -16,6 +16,13 @@ export default function ConfigPage() {
   const [saved, setSaved] = useState(false)
   const [error, setError] = useState("")
 
+  const [currentPassword, setCurrentPassword] = useState("")
+  const [newPassword, setNewPassword] = useState("")
+  const [confirmPassword, setConfirmPassword] = useState("")
+  const [pwSaving, setPwSaving] = useState(false)
+  const [pwError, setPwError] = useState("")
+  const [pwSaved, setPwSaved] = useState(false)
+
   useEffect(() => {
     fetch("/api/admin/establishment")
       .then((r) => r.json())
@@ -191,6 +198,61 @@ export default function ConfigPage() {
         <Button variant="primary" size="lg" loading={saving} onClick={handleSave}>
           {saved ? "✓ Salvo!" : "Salvar configurações"}
         </Button>
+
+        {/* Alterar senha */}
+        <div className="bg-neutral-100 border border-neutral-300 rounded-md p-4 flex flex-col gap-4">
+          <div>
+            <p className="text-sm font-semibold text-neutral-900">Alterar senha</p>
+            <p className="text-xs text-neutral-500 mt-1">Escolha uma senha forte com pelo menos 8 caracteres.</p>
+          </div>
+          <Input
+            label="Senha atual"
+            type="password"
+            value={currentPassword}
+            onChange={(e) => setCurrentPassword(e.target.value)}
+            placeholder="••••••••"
+          />
+          <Input
+            label="Nova senha"
+            type="password"
+            value={newPassword}
+            onChange={(e) => setNewPassword(e.target.value)}
+            placeholder="••••••••"
+          />
+          <Input
+            label="Confirmar nova senha"
+            type="password"
+            value={confirmPassword}
+            onChange={(e) => setConfirmPassword(e.target.value)}
+            placeholder="••••••••"
+            error={pwError}
+          />
+          <Button
+            variant="primary"
+            size="lg"
+            loading={pwSaving}
+            onClick={async () => {
+              setPwError("")
+              if (!currentPassword || !newPassword || !confirmPassword) { setPwError("Preencha todos os campos"); return }
+              if (newPassword !== confirmPassword) { setPwError("As senhas não coincidem"); return }
+              if (newPassword.length < 8) { setPwError("A nova senha deve ter ao menos 8 caracteres"); return }
+              setPwSaving(true)
+              const res = await fetch("/api/admin/password", {
+                method: "PATCH",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ currentPassword, newPassword }),
+              })
+              const data = await res.json()
+              setPwSaving(false)
+              if (!res.ok) { setPwError(data.error); return }
+              setPwSaved(true)
+              setCurrentPassword(""); setNewPassword(""); setConfirmPassword("")
+              setTimeout(() => setPwSaved(false), 3000)
+            }}
+          >
+            {pwSaved ? "✓ Senha alterada!" : "Alterar senha"}
+          </Button>
+        </div>
       </div>
     </div>
   )
