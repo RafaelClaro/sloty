@@ -16,6 +16,7 @@ interface NotifyNewBookingParams {
   endTime: Date
   bookingId: string
   reason?: string
+  primaryColor?: string
 }
 
 interface ConfirmationToClientParams {
@@ -73,7 +74,9 @@ export async function notifyEstablishmentNewBooking({
   endTime,
   bookingId,
   reason,
+  primaryColor,
 }: NotifyNewBookingParams) {
+  const headerBg = primaryColor ?? "#2D6A4F"
   if (!toEmail) return
 
   const dateLabel = startTime.toLocaleDateString("pt-BR", {
@@ -115,7 +118,7 @@ export async function notifyEstablishmentNewBooking({
 </head>
 <body style="margin:0;padding:16px;background:#f8fafc;" class="em-bg">
 <div style="font-family:-apple-system,sans-serif;max-width:480px;margin:0 auto;">
-  <div style="background:#2D6A4F;padding:20px;border-radius:12px 12px 0 0;">
+  <div style="background:${headerBg};padding:20px;border-radius:12px 12px 0 0;">
     <h1 style="color:#fff;font-size:18px;margin:0;">Novo agendamento</h1>
     <p style="color:rgba(255,255,255,0.8);font-size:13px;margin:4px 0 0;">${establishmentName}</p>
   </div>
@@ -151,7 +154,7 @@ export async function notifyEstablishmentNewBooking({
       Adicionar à agenda
     </p>
     <a href="${googleCalendarUrl}" target="_blank"
-       style="display:block;text-align:center;background:#2D6A4F;color:#fff;
+       style="display:block;text-align:center;background:${headerBg};color:#fff;
               text-decoration:none;font-size:13px;font-weight:600;padding:10px 16px;border-radius:8px;">
       Adicionar ao Google Calendar
     </a>

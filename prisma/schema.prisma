@@ -13,9 +13,13 @@ model Establishment {
   description String?
   phone       String?
   notifyEmail String?
-  timezone    String   @default("America/Sao_Paulo")
-  meetLink    String?
-  createdAt   DateTime @default(now())
+  timezone       String   @default("America/Sao_Paulo")
+  meetLink       String?
+  primaryColor   String?  @default("#2D6A4F")
+  primaryDark    String?  @default("#1B4332")
+  primaryLight   String?  @default("#D8F3DC")
+  fontFamily     String?
+  createdAt      DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
   services        Service[]
