@@ -17,32 +17,49 @@ export default async function EstablishmentLayout({
 
   if (!establishment) notFound()
 
-  // Passa dados do estabelecimento via data attributes pra páginas client acessarem
+  const primary      = establishment.primaryColor  ?? "#2D6A4F"
+  const primaryDark  = establishment.primaryDark   ?? "#1B4332"
+  const primaryLight = establishment.primaryLight  ?? "#D8F3DC"
+  const fontFamily   = establishment.fontFamily    ?? null
+
   return (
     <div
-      className="min-h-dvh bg-neutral-100"
+      className="min-h-dvh"
+      style={{
+        "--color-primary":       primary,
+        "--color-primary-dark":  primaryDark,
+        "--color-primary-light": primaryLight,
+        background: "#F8F9FC",
+      } as React.CSSProperties}
       data-establishment-name={establishment.name}
       data-establishment-description={establishment.description ?? ""}
       data-establishment-slug={establishment.slug}
     >
+      {fontFamily && (
+        <link
+          rel="stylesheet"
+          href={`https://fonts.googleapis.com/css2?family=${fontFamily.replace(/ /g, "+")}:wght@400;600;700&display=swap`}
+        />
+      )}
       <ScrollToTop />
       <div className="max-w-md mx-auto">
-        {/* Header base — cada página injeta contexto via BookingHeader próprio */}
         <div className="px-4 pt-6">
           <header
             className="relative overflow-hidden rounded-3xl px-5 py-6 shadow-elevated"
-            style={{ background: "linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%)" }}
+            style={{ background: `linear-gradient(135deg, ${primary} 0%, ${primaryDark} 100%)` }}
           >
             <div className="absolute -top-8 -right-8 w-32 h-32 rounded-full bg-white/10" />
             <div className="absolute -bottom-10 -left-6 w-28 h-28 rounded-full bg-white/5" />
-            <div className="relative flex items-center gap-3">
-              <div className="w-11 h-11 shrink-0 rounded-full bg-white/15 flex items-center justify-center text-white font-bold text-lg">
-                {establishment.name.charAt(0)}
-              </div>
-              <div className="min-w-0">
-                <h1 className="text-white text-base font-bold truncate">{establishment.name}</h1>
-                <p className="text-white/75 text-xs mt-0.5 truncate">{establishment.description}</p>
-              </div>
+            <div className="relative">
+              <h1
+                className="text-white text-lg font-bold"
+                style={fontFamily ? { fontFamily: `'${fontFamily}', Georgia, serif` } : undefined}
+              >
+                {establishment.name}
+              </h1>
+              {establishment.description && (
+                <p className="text-white/75 text-xs mt-1">{establishment.description}</p>
+              )}
             </div>
           </header>
         </div>

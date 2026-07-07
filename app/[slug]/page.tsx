@@ -44,7 +44,7 @@ export default async function ServicesPage({ params }: { params: Promise<{ slug:
               padding: "16px 14px",
               boxShadow: "0 1px 4px rgba(0,0,0,0.04)",
               gap: 12,
-            }}
+            } as React.CSSProperties}
           >
             {/* Ícone */}
             <div
@@ -53,7 +53,7 @@ export default async function ServicesPage({ params }: { params: Promise<{ slug:
                 width: 46,
                 height: 46,
                 borderRadius: 14,
-                background: "#F0FDF4",
+                background: "var(--color-primary-light)",
                 fontSize: 22,
               }}
             >
@@ -73,7 +73,7 @@ export default async function ServicesPage({ params }: { params: Promise<{ slug:
                   className="rounded-full bg-neutral-300"
                   style={{ width: 3, height: 3, display: "inline-block" }}
                 />
-                <span className="font-semibold" style={{ fontSize: 13, color: "#2D6A4F" }}>
+                <span className="font-semibold" style={{ fontSize: 13, color: "var(--color-primary)" }}>
                   {formatCurrency(Number(service.price))}
                 </span>
               </div>
@@ -91,8 +91,8 @@ export default async function ServicesPage({ params }: { params: Promise<{ slug:
                 width: 28,
                 height: 28,
                 borderRadius: "50%",
-                background: "#F0FDF4",
-                color: "#2D6A4F",
+                background: "var(--color-primary-light)",
+                color: "var(--color-primary)",
                 fontSize: 14,
               }}
             >
