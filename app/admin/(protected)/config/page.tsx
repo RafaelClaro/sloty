@@ -18,6 +18,9 @@ export default function ConfigPage() {
   const [pwSaving, setPwSaving] = useState(false)
   const [pwError, setPwError] = useState("")
   const [pwSaved, setPwSaved] = useState(false)
+  const [showCurrent, setShowCurrent] = useState(false)
+  const [showNew, setShowNew] = useState(false)
+  const [showConfirm, setShowConfirm] = useState(false)
 
   useEffect(() => {
     fetch("/api/admin/establishment")
@@ -102,28 +105,42 @@ export default function ConfigPage() {
             <p className="text-sm font-semibold text-neutral-900">Alterar senha</p>
             <p className="text-xs text-neutral-500 mt-1">Escolha uma senha forte com pelo menos 8 caracteres.</p>
           </div>
-          <Input
-            label="Senha atual"
-            type="password"
-            value={currentPassword}
-            onChange={(e) => setCurrentPassword(e.target.value)}
-            placeholder="••••••••"
-          />
-          <Input
-            label="Nova senha"
-            type="password"
-            value={newPassword}
-            onChange={(e) => setNewPassword(e.target.value)}
-            placeholder="••••••••"
-          />
-          <Input
-            label="Confirmar nova senha"
-            type="password"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            placeholder="••••••••"
-            error={pwError}
-          />
+          {[
+            { label: "Senha atual", value: currentPassword, set: setCurrentPassword, show: showCurrent, toggle: () => setShowCurrent(v => !v) },
+            { label: "Nova senha", value: newPassword, set: setNewPassword, show: showNew, toggle: () => setShowNew(v => !v) },
+            { label: "Confirmar nova senha", value: confirmPassword, set: setConfirmPassword, show: showConfirm, toggle: () => setShowConfirm(v => !v) },
+          ].map(({ label, value, set, show, toggle }, i) => (
+            <div key={i} className="flex flex-col gap-1">
+              <label className="text-xs font-medium text-neutral-700">{label}</label>
+              <div className="relative">
+                <input
+                  type={show ? "text" : "password"}
+                  value={value}
+                  onChange={(e) => set(e.target.value)}
+                  placeholder="••••••••"
+                  className="w-full border border-neutral-300 rounded-md px-3 py-2 pr-10 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
+                />
+                <button
+                  type="button"
+                  onClick={toggle}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-600"
+                  tabIndex={-1}
+                >
+                  {show ? (
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 4.411m0 0L21 21" />
+                    </svg>
+                  ) : (
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+                  )}
+                </button>
+              </div>
+              {i === 2 && pwError && <p className="text-xs text-red-500 mt-0.5">{pwError}</p>}
+            </div>
+          ))}
           <Button
             variant="primary"
             size="lg"
