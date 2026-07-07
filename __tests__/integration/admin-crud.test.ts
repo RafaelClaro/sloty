@@ -10,6 +10,7 @@ import { PATCH as patchBooking } from "@/app/api/admin/bookings/[id]/route"
 import { GET as getHistory } from "@/app/api/admin/bookings/history/route"
 import { GET as getNotes, PUT as putNotes } from "@/app/api/admin/patients/notes/route"
 import { PATCH as patchPassword } from "@/app/api/admin/password/route"
+import { PATCH as patchEmail } from "@/app/api/admin/email/route"
 
 vi.mock("next-auth", () => ({
   getServerSession: vi.fn(),
@@ -397,5 +398,60 @@ describe("/api/admin/password", () => {
     const bcrypt = await import("bcryptjs")
     const updated = await prisma.user.findUnique({ where: { id: userId } })
     expect(await bcrypt.compare("novasenha456", updated!.passwordHash)).toBe(true)
+  })
+})
+
+describe("/api/admin/email", () => {
+  let emailUserId: string
+  const emailUserPw = "emailtestpw123"
+
+  beforeAll(async () => {
+    const bcrypt = await import("bcryptjs")
+    const hash = await bcrypt.hash(emailUserPw, 12)
+    const user = await prisma.user.create({
+      data: {
+        establishmentId: establishmentA.id,
+        email: `email-test-${Date.now()}@ci.test`,
+        passwordHash: hash,
+      },
+    })
+    emailUserId = user.id
+  })
+
+  afterAll(async () => {
+    await prisma.user.deleteMany({ where: { id: emailUserId } })
+  })
+
+  it("rejeita sem sessão", async () => {
+    mockedGetServerSession.mockResolvedValue(null)
+    const req = jsonRequest("http://localhost/api/admin/email", "PATCH", { newEmail: "x@x.com", currentPassword: "y" })
+    const res = await patchEmail(req)
+    expect(res.status).toBe(401)
+  })
+
+  it("rejeita email inválido", async () => {
+    mockedGetServerSession.mockResolvedValue(sessionFor(establishmentA.id, establishmentA.slug))
+    const req = jsonRequest("http://localhost/api/admin/email", "PATCH", { newEmail: "naoemail", currentPassword: emailUserPw })
+    const res = await patchEmail(req)
+    expect(res.status).toBe(400)
+    expect((await res.json()).error).toMatch(/válido/)
+  })
+
+  it("rejeita senha incorreta", async () => {
+    mockedGetServerSession.mockResolvedValue(sessionFor(establishmentA.id, establishmentA.slug))
+    const req = jsonRequest("http://localhost/api/admin/email", "PATCH", { newEmail: "novo@ci.test", currentPassword: "errada" })
+    const res = await patchEmail(req)
+    expect(res.status).toBe(400)
+    expect((await res.json()).error).toMatch(/incorreta/)
+  })
+
+  it("altera email com sucesso", async () => {
+    mockedGetServerSession.mockResolvedValue(sessionFor(establishmentA.id, establishmentA.slug))
+    const newEmail = `novo-${Date.now()}@ci.test`
+    const req = jsonRequest("http://localhost/api/admin/email", "PATCH", { newEmail, currentPassword: emailUserPw })
+    const res = await patchEmail(req)
+    expect(res.status).toBe(200)
+    const updated = await prisma.user.findUnique({ where: { id: emailUserId } })
+    expect(updated?.email).toBe(newEmail)
   })
 })
