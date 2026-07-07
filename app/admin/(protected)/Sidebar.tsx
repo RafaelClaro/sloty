@@ -59,7 +59,7 @@ export function Sidebar() {
   return (
     <aside className="hidden md:flex flex-col w-52 bg-white border-r border-neutral-200 shrink-0 p-4 gap-1 min-h-screen sticky top-0">
       <div className="px-2 mb-6">
-        <p className="text-sm font-bold text-primary">AgendaAí</p>
+        <p className="text-sm font-bold text-primary">Agendaweb</p>
         <p className="text-xs text-neutral-400 mt-0.5">Painel admin</p>
       </div>
       {items.map(({ href, label, Icon }) => {

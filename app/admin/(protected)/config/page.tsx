@@ -7,10 +7,6 @@ import { Input } from "@/components/ui/Input"
 export default function ConfigPage() {
   const [notifyEmail, setNotifyEmail] = useState("")
   const [notifyEnabled, setNotifyEnabled] = useState(true)
-  const [primaryColor, setPrimaryColor] = useState("#2D6A4F")
-  const [primaryDark, setPrimaryDark] = useState("#1B4332")
-  const [primaryLight, setPrimaryLight] = useState("#D8F3DC")
-  const [fontFamily, setFontFamily] = useState("")
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
@@ -31,10 +27,6 @@ export default function ConfigPage() {
         if (!e) return
         setNotifyEmail(e.notifyEmail ?? "")
         setNotifyEnabled(!!e.notifyEmail)
-        setPrimaryColor(e.primaryColor ?? "#2D6A4F")
-        setPrimaryDark(e.primaryDark ?? "#1B4332")
-        setPrimaryLight(e.primaryLight ?? "#D8F3DC")
-        setFontFamily(e.fontFamily ?? "")
       })
       .finally(() => setLoading(false))
   }, [])
@@ -51,10 +43,6 @@ export default function ConfigPage() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         notifyEmail: notifyEnabled ? notifyEmail || null : null,
-        primaryColor,
-        primaryDark,
-        primaryLight,
-        fontFamily: fontFamily || null,
       }),
     })
     setSaving(false)
@@ -101,97 +89,6 @@ export default function ConfigPage() {
                 error={error}
               />
             )
-          )}
-        </div>
-
-        {/* Identidade visual */}
-        <div className="bg-neutral-100 border border-neutral-300 rounded-md p-4 flex flex-col gap-4">
-          <div>
-            <p className="text-sm font-semibold text-neutral-900">Identidade visual</p>
-            <p className="text-xs text-neutral-500 mt-1">
-              Personalize as cores e a fonte exibidas no seu link de agendamento.
-            </p>
-          </div>
-
-          {loading ? (
-            <div className="flex flex-col gap-3">
-              {[1,2,3,4].map(i => <div key={i} className="h-10 rounded-md bg-neutral-200 animate-pulse" />)}
-            </div>
-          ) : (
-            <div className="flex flex-col gap-4">
-              {/* Cor principal */}
-              <div className="flex flex-col gap-1.5">
-                <label className="text-xs font-medium text-neutral-700">Cor principal</label>
-                <div className="flex items-center gap-2">
-                  <input
-                    type="color"
-                    value={primaryColor}
-                    onChange={(e) => setPrimaryColor(e.target.value)}
-                    className="w-10 h-10 rounded cursor-pointer border border-neutral-300"
-                  />
-                  <input
-                    type="text"
-                    value={primaryColor}
-                    onChange={(e) => setPrimaryColor(e.target.value)}
-                    placeholder="#2D6A4F"
-                    className="flex-1 bg-white border border-neutral-300 rounded-md px-3 py-2 text-sm font-mono"
-                  />
-                </div>
-              </div>
-
-              {/* Cor escura */}
-              <div className="flex flex-col gap-1.5">
-                <label className="text-xs font-medium text-neutral-700">Cor de hover / escura</label>
-                <div className="flex items-center gap-2">
-                  <input
-                    type="color"
-                    value={primaryDark}
-                    onChange={(e) => setPrimaryDark(e.target.value)}
-                    className="w-10 h-10 rounded cursor-pointer border border-neutral-300"
-                  />
-                  <input
-                    type="text"
-                    value={primaryDark}
-                    onChange={(e) => setPrimaryDark(e.target.value)}
-                    placeholder="#1B4332"
-                    className="flex-1 bg-white border border-neutral-300 rounded-md px-3 py-2 text-sm font-mono"
-                  />
-                </div>
-              </div>
-
-              {/* Cor clara */}
-              <div className="flex flex-col gap-1.5">
-                <label className="text-xs font-medium text-neutral-700">Cor de fundo suave</label>
-                <div className="flex items-center gap-2">
-                  <input
-                    type="color"
-                    value={primaryLight}
-                    onChange={(e) => setPrimaryLight(e.target.value)}
-                    className="w-10 h-10 rounded cursor-pointer border border-neutral-300"
-                  />
-                  <input
-                    type="text"
-                    value={primaryLight}
-                    onChange={(e) => setPrimaryLight(e.target.value)}
-                    placeholder="#D8F3DC"
-                    className="flex-1 bg-white border border-neutral-300 rounded-md px-3 py-2 text-sm font-mono"
-                  />
-                </div>
-              </div>
-
-              {/* Fonte */}
-              <div className="flex flex-col gap-1.5">
-                <label className="text-xs font-medium text-neutral-700">Fonte dos títulos</label>
-                <input
-                  type="text"
-                  value={fontFamily}
-                  onChange={(e) => setFontFamily(e.target.value)}
-                  placeholder="Ex: Cormorant Garamond, Playfair Display"
-                  className="bg-white border border-neutral-300 rounded-md px-3 py-2 text-sm"
-                />
-                <p className="text-xs text-neutral-400">Nome exato de uma fonte do Google Fonts</p>
-              </div>
-            </div>
           )}
         </div>
 
