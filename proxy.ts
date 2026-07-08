@@ -13,8 +13,14 @@ function subdomainRewrite(req: NextRequest): NextResponse | null {
   if (!slug || slug === "www") return null
 
   const url = req.nextUrl.clone()
-  const pathname = url.pathname === "/" ? "" : url.pathname
-  url.pathname = `/${slug}${pathname}`
+  const pathname = url.pathname
+
+  // Path already contains the slug (internal app navigation) — don't double-prefix
+  if (pathname.startsWith(`/${slug}/`) || pathname === `/${slug}`) {
+    return null
+  }
+
+  url.pathname = `/${slug}${pathname === "/" ? "" : pathname}`
 
   return NextResponse.rewrite(url)
 }
