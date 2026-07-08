@@ -1,7 +1,27 @@
+import type { Metadata } from "next"
 import { prisma } from "@/lib/prisma"
 import { notFound } from "next/navigation"
 import { ReactNode } from "react"
 import { ScrollToTop } from "./ScrollToTop"
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string }>
+}): Promise<Metadata> {
+  const { slug } = await params
+  const establishment = await prisma.establishment.findUnique({
+    where: { slug },
+    select: { name: true },
+  })
+
+  return {
+    title: establishment?.name ?? "AgendaWeb",
+    icons: {
+      icon: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🩺</text></svg>",
+    },
+  }
+}
 
 export default async function EstablishmentLayout({
   children,
