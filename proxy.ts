@@ -15,8 +15,12 @@ function subdomainRewrite(req: NextRequest): NextResponse | null {
   const url = req.nextUrl.clone()
   const pathname = url.pathname
 
-  // Path already contains the slug (internal app navigation) — don't double-prefix
-  if (pathname.startsWith(`/${slug}/`) || pathname === `/${slug}`) {
+  // Don't rewrite API calls or paths already containing the slug
+  if (
+    pathname.startsWith("/api/") ||
+    pathname.startsWith(`/${slug}/`) ||
+    pathname === `/${slug}`
+  ) {
     return null
   }
 
