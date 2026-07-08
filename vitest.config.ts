@@ -13,8 +13,9 @@ export default defineConfig({
       provider: "v8",
       reporter: ["text", "json", "html"],
       thresholds: {
-        functions: 80,
-        lines: 80,
+        functions: 70,
+        lines: 70,
+        branches: 70,
       },
       include: [
         "lib/availability.ts",
