@@ -89,7 +89,7 @@ function AgendarContent() {
     <>
       {/* Contexto acumulado */}
       {serviceName && (
-        <div className="bg-primary-light border border-secondary rounded-2xl px-4 py-3 flex items-center justify-between">
+        <div className="bg-primary-light border border-primary rounded-2xl px-4 py-3 flex items-center justify-between">
           <div>
             <p className="text-sm font-semibold text-primary-dark">{serviceName}</p>
             {serviceLabel && <p className="text-xs text-primary mt-0.5">{serviceLabel}</p>}
