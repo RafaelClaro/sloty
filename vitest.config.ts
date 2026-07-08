@@ -15,6 +15,7 @@ export default defineConfig({
       thresholds: {
         functions: 70,
         lines: 70,
+        branches: 70,
       },
       include: [
         "lib/availability.ts",
