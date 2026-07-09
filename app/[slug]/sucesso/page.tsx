@@ -35,8 +35,8 @@ export default async function SucessoPage({
       </div>
 
       <div className="flex flex-col items-center gap-1">
-        <p className="text-base font-semibold text-neutral-900 capitalize">{dateLabel}</p>
-        <p className="text-2xl font-bold text-primary">{time}</p>
+        <p className="text-base font-semibold text-neutral-900">{dateLabel}</p>
+        <p className="text-xl font-bold text-primary">{time}</p>
       </div>
 
       <div className="flex flex-col items-center gap-1 bg-gradient-to-b from-neutral-100 to-white border border-neutral-300
