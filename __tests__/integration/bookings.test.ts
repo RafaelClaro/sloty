@@ -3,6 +3,7 @@ import { NextRequest } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { POST as postBooking } from "@/app/api/[slug]/bookings/route"
 import { POST as postCancel } from "@/app/api/[slug]/bookings/cancel/route"
+import { GET as getLookup } from "@/app/api/[slug]/bookings/lookup/route"
 
 const TEST_PREFIX = "ci-bookings-"
 const slug = `${TEST_PREFIX}${Date.now()}`
@@ -158,5 +159,54 @@ describe("POST /api/[slug]/bookings/cancel", () => {
     const res = await postCancel(secondCancel, { params: Promise.resolve({ slug }) })
 
     expect(res.status).toBe(400)
+  })
+})
+
+describe("GET /api/[slug]/bookings/lookup", () => {
+  async function createBooking() {
+    const req = makeRequest(`http://localhost/api/${slug}/bookings`, {
+      serviceId,
+      startTime: "2099-06-17T15:00:00.000Z",
+      clientName: "Cliente Lookup",
+      clientPhone: "11999999999",
+    })
+    const res = await postBooking(req, { params: Promise.resolve({ slug }) })
+    return res.json()
+  }
+
+  it("com token válido retorna 200 com dados do agendamento", async () => {
+    const { cancelToken } = await createBooking()
+
+    const req = new NextRequest(`http://localhost/api/${slug}/bookings/lookup?token=${cancelToken}`)
+    const res = await getLookup(req, { params: Promise.resolve({ slug }) })
+    const data = await res.json()
+
+    expect(res.status).toBe(200)
+    expect(data.cancelToken).toBe(cancelToken)
+    expect(data.status).toBe("CONFIRMED")
+    expect(data.service).toBeTruthy()
+  })
+
+  it("sem token retorna 400", async () => {
+    const req = new NextRequest(`http://localhost/api/${slug}/bookings/lookup`)
+    const res = await getLookup(req, { params: Promise.resolve({ slug }) })
+
+    expect(res.status).toBe(400)
+  })
+
+  it("com token inválido retorna 404", async () => {
+    const req = new NextRequest(`http://localhost/api/${slug}/bookings/lookup?token=TOKENINVALIDO`)
+    const res = await getLookup(req, { params: Promise.resolve({ slug }) })
+
+    expect(res.status).toBe(404)
+  })
+
+  it("com slug inválido retorna 404", async () => {
+    const { cancelToken } = await createBooking()
+
+    const req = new NextRequest(`http://localhost/api/slug-inexistente/bookings/lookup?token=${cancelToken}`)
+    const res = await getLookup(req, { params: Promise.resolve({ slug: "slug-inexistente" }) })
+
+    expect(res.status).toBe(404)
   })
 })
