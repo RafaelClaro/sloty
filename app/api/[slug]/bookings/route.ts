@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { after } from "next/server"
 import { prisma } from "@/lib/prisma"
 import { nanoid } from "nanoid"
-import { notifyEstablishmentNewBooking, sendBookingConfirmationToClient } from "@/lib/email"
+import { notifyEstablishmentNewBooking, notifyPatientNewBooking } from "@/lib/email"
 
 export async function POST(
   request: NextRequest,
@@ -89,20 +89,19 @@ export async function POST(
     }
 
     if (booking.clientEmail) {
-      console.log("[bookings] agendando after() para email de confirmação do cliente", booking.clientEmail)
       after(() =>
-        sendBookingConfirmationToClient({
+        notifyPatientNewBooking({
           toEmail: booking.clientEmail!,
-          establishmentName: establishment.name,
-          establishmentSlug: establishment.slug,
           clientName: booking.clientName,
+          establishmentName: establishment.name,
           serviceName: booking.service.name,
           startTime: booking.startTime,
           endTime: booking.endTime,
           bookingId: booking.id,
           cancelToken: booking.cancelToken,
+          slug: establishment.slug,
           primaryColor: establishment.primaryColor ?? undefined,
-        }).catch((err) => console.error("[client confirmation email]", err))
+        }).catch((err) => console.error("[patient email]", err))
       )
     }
 

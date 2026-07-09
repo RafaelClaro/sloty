@@ -321,3 +321,151 @@ export async function sendBookingConfirmationToClient({
     console.error("[sendBookingConfirmationToClient] erro ao enviar email:", error)
   }
 }
+
+interface NotifyPatientParams {
+  toEmail: string
+  clientName: string
+  establishmentName: string
+  serviceName: string
+  startTime: Date
+  endTime: Date
+  bookingId: string
+  cancelToken: string
+  slug: string
+  primaryColor?: string
+}
+
+export async function notifyPatientNewBooking({
+  toEmail,
+  clientName,
+  establishmentName,
+  serviceName,
+  startTime,
+  endTime,
+  bookingId,
+  cancelToken,
+  slug,
+  primaryColor,
+}: NotifyPatientParams) {
+  if (!toEmail) return
+
+  const headerBg = primaryColor ?? "#1B3F8B"
+
+  const dateLabel = startTime.toLocaleDateString("pt-BR", {
+    weekday: "long", day: "numeric", month: "long", timeZone: "America/Sao_Paulo",
+  })
+  const timeLabel = startTime.toLocaleTimeString("pt-BR", {
+    hour: "2-digit", minute: "2-digit", timeZone: "America/Sao_Paulo",
+  })
+
+  const eventTitle = `${serviceName} — ${establishmentName}`
+  const eventDescription = `Estabelecimento: ${establishmentName}\nServiço: ${serviceName}`
+
+  const ics = generateIcsEvent({
+    uid: bookingId,
+    title: eventTitle,
+    description: eventDescription.replace(/\n/g, "\\n"),
+    startTime,
+    endTime,
+  })
+
+  const googleCalendarUrl = buildGoogleCalendarUrl({
+    title: eventTitle,
+    description: eventDescription,
+    startTime,
+    endTime,
+  })
+
+  const meuAgendamentoUrl = process.env.ROOT_DOMAIN
+    ? `https://${slug}.${process.env.ROOT_DOMAIN}/meus-agendamentos?token=${cancelToken}`
+    : `${APP_URL}/${slug}/meus-agendamentos?token=${cancelToken}`
+
+  const icsUrl = `${APP_URL}/api/calendar/${cancelToken}`
+
+  try {
+    const resend = new Resend(process.env.RESEND_API_KEY)
+    const { error } = await resend.emails.send({
+      from: FROM_EMAIL,
+      to: toEmail,
+      subject: `Agendamento confirmado — ${dateLabel}`,
+      html: `<!DOCTYPE html>
+<html><head>
+<meta name="color-scheme" content="light dark">
+<meta name="supported-color-schemes" content="light dark">
+</head>
+<body style="margin:0;padding:16px;background:#f8fafc;font-family:-apple-system,sans-serif;">
+<div style="max-width:480px;margin:0 auto;">
+  <div style="background:${headerBg};padding:20px 24px;border-radius:12px 12px 0 0;">
+    <h1 style="color:#fff;font-size:16px;font-weight:600;margin:0 0 2px;">Agendamento confirmado!</h1>
+    <p style="color:rgba(255,255,255,0.7);font-size:12px;margin:0;">${establishmentName}</p>
+  </div>
+  <div style="padding:20px 24px;border:1px solid #E9EDE9;border-top:none;border-radius:0 0 12px 12px;background:#ffffff;">
+    <p style="font-size:13px;color:#6B7280;margin:0 0 14px;">
+      Olá, ${clientName}! Seu agendamento está confirmado:
+    </p>
+    <table style="width:100%;font-size:13px;border-collapse:collapse;margin-bottom:20px;">
+      <tr>
+        <td style="padding:4px 0;color:#9CA3AF;width:80px;">Serviço</td>
+        <td style="padding:4px 0;font-weight:500;color:#111827;">${serviceName}</td>
+      </tr>
+      <tr>
+        <td style="padding:4px 0;color:#9CA3AF;">Data</td>
+        <td style="padding:4px 0;font-weight:500;color:#111827;">${dateLabel}</td>
+      </tr>
+      <tr>
+        <td style="padding:4px 0;color:#9CA3AF;">Horário</td>
+        <td style="padding:4px 0;font-weight:500;color:#111827;">${timeLabel}</td>
+      </tr>
+    </table>
+    <table style="width:100%;border-collapse:collapse;margin-bottom:20px;">
+      <tr>
+        <td style="padding-right:4px;">
+          <a href="${googleCalendarUrl}" target="_blank"
+             style="display:block;text-align:center;background:${headerBg};color:#fff;
+                    text-decoration:none;font-size:13px;font-weight:500;
+                    padding:10px;border-radius:8px;">
+            Google Calendar
+          </a>
+        </td>
+        <td style="padding-left:4px;">
+          <a href="${icsUrl}" target="_blank"
+             style="display:block;text-align:center;background:#111111;color:#fff;
+                    text-decoration:none;font-size:13px;font-weight:500;
+                    padding:10px;border-radius:8px;">
+            Apple Calendar
+          </a>
+        </td>
+      </tr>
+    </table>
+    <div style="background:#E8EEFB;border:1px solid #C5D3F0;border-radius:12px;padding:16px;text-align:center;">
+      <p style="font-size:11px;color:#2952B3;text-transform:uppercase;letter-spacing:0.06em;margin:0 0 8px;">
+        Código para cancelar
+      </p>
+      <p style="font-size:22px;font-weight:700;letter-spacing:4px;color:#142D6E;font-family:monospace;margin:0 0 12px;">
+        ${cancelToken}
+      </p>
+      <div style="border-top:1px solid #C5D3F0;padding-top:12px;">
+        <a href="${meuAgendamentoUrl}"
+           style="font-size:13px;color:#1B3F8B;text-decoration:underline;text-decoration-style:dotted;">
+          Meus agendamentos
+        </a>
+      </div>
+    </div>
+  </div>
+</div>
+</body></html>`,
+      attachments: [
+        {
+          filename: "agendamento.ics",
+          content: Buffer.from(ics.replace(/^﻿/, ""), "utf-8"),
+          contentType: "text/calendar; charset=utf-8; method=PUBLISH",
+        },
+      ],
+    })
+    if (error) {
+      console.error("[notifyPatientNewBooking] Resend recusou o envio:", error)
+    }
+  } catch (error) {
+    console.error("[notifyPatientNewBooking] erro ao enviar email:", error)
+  }
+}
