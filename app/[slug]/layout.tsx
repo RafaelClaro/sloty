@@ -1,8 +1,13 @@
-import type { Metadata } from "next"
+import type { Metadata, Viewport } from "next"
 import { prisma } from "@/lib/prisma"
 import { notFound } from "next/navigation"
 import { ReactNode } from "react"
 import { ScrollToTop } from "./ScrollToTop"
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+}
 
 export async function generateMetadata({
   params,
@@ -47,7 +52,7 @@ export default async function EstablishmentLayout({
 
   return (
     <div
-      className="min-h-dvh"
+      className="min-h-dvh overflow-x-hidden"
       style={{
         "--color-primary":       primary,
         "--color-primary-dark":  primaryDark,
