@@ -224,6 +224,9 @@ export async function sendBookingConfirmationToClient({
 
   const cancelUrl = `${APP_URL}/${establishmentSlug}/cancelar`
   const icsUrl = `${APP_URL}/api/calendar/${cancelToken}`
+  const meusAgendamentosUrl = process.env.ROOT_DOMAIN
+    ? `https://${establishmentSlug}.${process.env.ROOT_DOMAIN}/meus-agendamentos?token=${cancelToken}`
+    : `${APP_URL}/${establishmentSlug}/meus-agendamentos?token=${cancelToken}`
 
   try {
     const resend = new Resend(process.env.RESEND_API_KEY)
@@ -287,6 +290,15 @@ export async function sendBookingConfirmationToClient({
       <p class="em-ccode" style="font-size:20px;font-weight:700;letter-spacing:0.15em;margin:4px 0;color:#1A1A2E;">${cancelToken}</p>
       <a href="${cancelUrl}" class="em-clink" style="font-size:12px;color:${headerBg};font-weight:600;">
         Cancelar este agendamento
+      </a>
+    </div>
+    <div style="border-top:1px solid #E9EDE9;margin-top:20px;padding-top:16px;text-align:center;">
+      <p style="font-size:12px;color:#9CA3AF;margin:0 0 10px;">
+        Precisa alterar sua consulta?
+      </p>
+      <a href="${meusAgendamentosUrl}"
+         style="display:inline-flex;align-items:center;gap:6px;font-size:13px;color:#6B7280;text-decoration:underline;text-decoration-style:dotted;">
+        📋 Meus agendamentos
       </a>
     </div>
   </div>
