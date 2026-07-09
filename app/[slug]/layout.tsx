@@ -27,7 +27,6 @@ export async function generateMetadata({
     icons: {
       icon: `data:image/svg+xml;charset=utf-8,${encodeURIComponent(svg)}`,
     },
-    viewport: "width=device-width, initial-scale=1",
   }
 }
 
