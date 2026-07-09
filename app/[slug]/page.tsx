@@ -101,10 +101,15 @@ export default async function ServicesPage({ params }: { params: Promise<{ slug:
           </Link>
         ))}
 
-        {/* Atendimento online — informativo */}
-        <div className="flex items-center justify-center gap-1.5 pt-1 text-neutral-400">
-          <span className="text-sm">💻</span>
-          <p className="text-xs">Consultas realizadas por videochamada</p>
+        <div className="border-t border-neutral-100 pt-4 flex justify-center">
+          <Link
+            href={`/${slug}/meus-agendamentos`}
+            className="flex items-center gap-1.5 text-sm text-neutral-400
+                       underline decoration-dotted hover:text-neutral-600 transition-colors"
+          >
+            <span>📋</span>
+            Meus agendamentos
+          </Link>
         </div>
       </div>
     </>
