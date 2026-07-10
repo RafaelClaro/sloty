@@ -1,0 +1,44 @@
+name: E2E (pós-deploy)
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  e2e:
+    name: Playwright E2E — produção
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    env:
+      E2E_BASE_URL: https://catariny.agendaweb.digital
+      E2E_SLUG: catariny
+      CRON_SECRET: ${{ secrets.CRON_SECRET }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Instalar dependências
+        run: npm ci
+
+      - name: Instalar browsers Playwright
+        run: npx playwright install chromium --with-deps
+
+      - name: Aguardar deploy Vercel (90s)
+        run: sleep 90
+
+      - name: Rodar testes E2E
+        run: npm run test:e2e -- --project=chromium
+
+      - name: Upload resultados (em caso de falha)
+        uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7

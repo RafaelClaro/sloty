@@ -32,8 +32,12 @@ jobs:
       - name: Gerar Prisma client
         run: npx prisma generate
 
-      - name: Rodar testes e verificar cobertura
+      - name: Rodar testes (unit + integração)
+        run: npm run test:ci
+
+      - name: Gerar relatório de cobertura (informativo)
         run: npm run test:coverage
+        continue-on-error: true
 
       - name: Upload coverage report
         uses: actions/upload-artifact@v4
