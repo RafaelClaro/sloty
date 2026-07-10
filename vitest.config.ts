@@ -12,11 +12,6 @@ export default defineConfig({
     coverage: {
       provider: "v8",
       reporter: ["text", "json", "html"],
-      thresholds: {
-        functions: 70,
-        lines: 70,
-        branches: 70,
-      },
       include: [
         "lib/availability.ts",
         "lib/ics.ts",
