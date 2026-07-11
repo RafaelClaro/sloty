@@ -18,12 +18,15 @@ describe("generateIcsEvent", () => {
     expect(ics).toContain("END:VEVENT")
   })
 
-  it("DTSTART e DTEND estão presentes e em formato UTC", () => {
+  it("DTSTART e DTEND usam TZID=America/Sao_Paulo (horário local BRT)", () => {
     const ics = generateIcsEvent(baseParams)
-    expect(ics).toMatch(/DTSTART:\d{8}T\d{6}Z/)
-    expect(ics).toMatch(/DTEND:\d{8}T\d{6}Z/)
-    expect(ics).toContain("DTSTART:20990615T120000Z")
-    expect(ics).toContain("DTEND:20990615T130000Z")
+    // Deve usar TZID, não UTC com Z
+    expect(ics).toMatch(/DTSTART;TZID=America\/Sao_Paulo:\d{8}T\d{6}/)
+    expect(ics).toMatch(/DTEND;TZID=America\/Sao_Paulo:\d{8}T\d{6}/)
+    // 12:00Z = 09:00 BRT (UTC-3)
+    expect(ics).toContain("DTSTART;TZID=America/Sao_Paulo:20990615T090000")
+    expect(ics).toContain("DTEND;TZID=America/Sao_Paulo:20990615T100000")
+    expect(ics).toContain("BEGIN:VTIMEZONE")
   })
 
   it("SUMMARY contém o título passado", () => {
