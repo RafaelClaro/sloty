@@ -9,6 +9,7 @@ export default defineConfig({
     // Postgres contra o banco serverless.
     globalSetup: ["__tests__/setup.ts"],
     globals: true,
+    exclude: ["node_modules", "e2e/**"],
     coverage: {
       provider: "v8",
       reporter: ["text", "json", "html"],
