@@ -24,55 +24,71 @@ export default async function SucessoPage({
   const icsUrl = `/api/${slug}/ics?token=${encodeURIComponent(token)}&service=${encodeURIComponent(service)}&date=${date}&time=${time}`
 
   return (
-    <div className="flex flex-col items-center text-center gap-4 py-8">
-      <div className="w-16 h-16 bg-primary-light rounded-full flex items-center justify-center shadow-card">
-        <span className="text-primary text-3xl">✓</span>
+    <div style={{ display: "flex", flexDirection: "column", alignItems: "center", padding: "24px 18px 32px", gap: 0 }}>
+
+      {/* Check */}
+      <div style={{ width: 36, height: 36, borderRadius: "50%", background: "var(--color-primary-light)", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: 14 }}>
+        <span style={{ fontSize: 16, color: "var(--color-primary-dark, #1B4332)" }}>✓</span>
       </div>
 
-      <div>
-        <h2 className="text-xl font-bold text-neutral-900">Agendamento confirmado!</h2>
-        <p className="text-sm text-neutral-500 mt-1">{decodeURIComponent(service)}</p>
-      </div>
+      {/* Título e serviço */}
+      <p style={{ fontSize: 17, fontWeight: 600, color: "#111827", margin: "0 0 2px", textAlign: "center" }}>
+        Agendamento confirmado!
+      </p>
+      <p style={{ fontSize: 13, color: "#9CA3AF", margin: "0 0 4px" }}>
+        {decodeURIComponent(service)}
+      </p>
 
-      <div className="flex flex-col items-center gap-1">
-        <p className="text-base font-semibold text-neutral-900">{dateLabel}</p>
-        <p className="text-xl font-bold text-primary">{time}</p>
-      </div>
+      {/* Data e horário */}
+      <p style={{ fontSize: 13, color: "#6B7280", margin: "0 0 2px" }}>{dateLabel}</p>
+      <p style={{ fontSize: 22, fontWeight: 600, color: "var(--color-primary)", letterSpacing: "-0.5px", margin: "0 0 20px" }}>
+        {time}
+      </p>
 
-      <div className="flex flex-col items-center gap-1 bg-gradient-to-b from-neutral-100 to-white border border-neutral-300
-                      rounded-2xl py-4 px-6 w-full shadow-card">
-        <p className="text-xs text-neutral-500 flex items-center gap-1">✉️ CÓDIGO PARA CANCELAR</p>
-        <p className="text-2xl font-bold text-neutral-900 tracking-[0.2em] mt-1">{token}</p>
+      {/* Card do código — 68% largura */}
+      <div style={{
+        width: "68%",
+        background: "var(--color-primary-light)",
+        border: "1px solid color-mix(in srgb, var(--color-primary) 30%, white)",
+        borderRadius: 12,
+        padding: "10px 14px",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        gap: 4,
+        marginBottom: 18,
+      }}>
+        <p style={{ fontSize: 9, color: "var(--color-primary)", textTransform: "uppercase", letterSpacing: "0.07em", margin: 0 }}>
+          Código para cancelar
+        </p>
         <CopyCodeButton code={token} />
       </div>
 
-      <div className="flex flex-col gap-3 w-full pt-2">
+      {/* Botões de calendário */}
+      <div style={{ width: "100%", display: "flex", flexDirection: "column", gap: 8, marginBottom: 16 }}>
         <a
           href={calUrl}
           target="_blank"
           rel="noopener noreferrer"
-          className="w-full bg-primary text-white rounded-2xl py-3 text-sm
-                     font-semibold text-center hover:bg-primary-dark active:scale-[0.98] transition-all"
+          style={{ display: "block", width: "100%", padding: "11px", borderRadius: 12, background: "var(--color-primary)", color: "#fff", border: "none", fontSize: 13, fontWeight: 500, textAlign: "center", textDecoration: "none" }}
         >
-          📅 Google Calendar
+          Google Calendar
         </a>
-
         <a
           href={icsUrl}
-          className="w-full border border-primary text-primary rounded-2xl py-3 text-sm
-                     font-semibold text-center hover:bg-primary-light active:scale-[0.98] transition-all"
+          style={{ display: "block", width: "100%", padding: "10px", borderRadius: 12, background: "#fff", color: "#111827", border: "1.5px solid #E9EDE9", fontSize: 13, fontWeight: 500, textAlign: "center", textDecoration: "none" }}
         >
-          🍎 Apple Calendar / Outlook (.ics)
+          Apple Calendar / Outlook (.ics)
         </a>
-
-        <Link href={`/${slug}`} className="text-sm text-neutral-500 text-center">
-          Fazer outro agendamento
-        </Link>
-
-        <Link href={`/${slug}/cancelar`} className="text-xs text-neutral-400 text-center">
-          Cancelar este agendamento
-        </Link>
       </div>
+
+      {/* Links */}
+      <Link href={`/${slug}`} style={{ fontSize: 12, color: "#9CA3AF", textDecoration: "none" }}>
+        Fazer outro agendamento
+      </Link>
+      <Link href={`/${slug}/meu-agendamento`} style={{ fontSize: 11, color: "#D1D5DB", textDecoration: "none", marginTop: 4 }}>
+        Meu agendamento
+      </Link>
     </div>
   )
 }
