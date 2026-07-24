@@ -48,6 +48,7 @@ export default async function EstablishmentLayout({
   const primaryDark  = establishment.primaryDark   ?? "#1B4332"
   const primaryLight = establishment.primaryLight  ?? "#D8F3DC"
   const fontFamily   = establishment.fontFamily    ?? null
+  const logoUrl      = (establishment as any).logoUrl ?? null
 
   return (
     <div
@@ -77,17 +78,32 @@ export default async function EstablishmentLayout({
           >
             <div className="absolute -top-8 -right-8 w-32 h-32 rounded-full bg-white/10" />
             <div className="absolute -bottom-10 -left-6 w-28 h-28 rounded-full bg-white/5" />
-            <div className="relative">
-              <h1
-                className="text-white text-lg font-bold"
-                style={fontFamily ? { fontFamily: `'${fontFamily}', Georgia, serif` } : undefined}
-              >
-                {establishment.name}
-              </h1>
-              {establishment.description && (
-                <p className="text-white/75 text-xs mt-1">{establishment.description}</p>
-              )}
-            </div>
+            {logoUrl ? (
+              <img
+                src={logoUrl}
+                alt={establishment.name}
+                style={{
+                  height: 72,
+                  maxWidth: "70%",
+                  objectFit: "contain",
+                  objectPosition: "left center",
+                  position: "relative",
+                  zIndex: 1,
+                }}
+              />
+            ) : (
+              <div className="relative">
+                <h1
+                  className="text-white text-lg font-bold"
+                  style={fontFamily ? { fontFamily: `'${fontFamily}', Georgia, serif` } : undefined}
+                >
+                  {establishment.name}
+                </h1>
+                {establishment.description && (
+                  <p className="text-white/75 text-xs mt-1">{establishment.description}</p>
+                )}
+              </div>
+            )}
           </header>
         </div>
         <main className="px-4 py-5 flex flex-col gap-4">{children}</main>
