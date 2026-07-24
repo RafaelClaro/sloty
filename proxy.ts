@@ -15,9 +15,11 @@ function subdomainRewrite(req: NextRequest): NextResponse | null {
   const url = req.nextUrl.clone()
   const pathname = url.pathname
 
-  // Don't rewrite API calls or paths already containing the slug
+  // Don't rewrite API calls, static assets (files with extension, e.g.
+  // /logos/catariny.png) or paths already containing the slug
   if (
     pathname.startsWith("/api/") ||
+    /\.[a-zA-Z0-9]+$/.test(pathname) ||
     pathname.startsWith(`/${slug}/`) ||
     pathname === `/${slug}`
   ) {
