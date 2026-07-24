@@ -86,7 +86,7 @@ export default async function SucessoPage({
       <Link href={`/${slug}`} style={{ fontSize: 12, color: "#9CA3AF", textDecoration: "none" }}>
         Fazer outro agendamento
       </Link>
-      <Link href={`/${slug}/meu-agendamento`} style={{ fontSize: 11, color: "#D1D5DB", textDecoration: "none", marginTop: 4 }}>
+      <Link href="/meus-agendamentos" style={{ fontSize: 11, color: "#D1D5DB", textDecoration: "none", marginTop: 4 }}>
         Meu agendamento
       </Link>
     </div>
