@@ -11,6 +11,7 @@ interface SendBookingReminderParams {
   serviceName: string
   startTime: Date
   cancelToken: string
+  primaryColor?: string
 }
 
 const DARK_CSS = `
@@ -34,8 +35,11 @@ export async function sendBookingReminder({
   serviceName,
   startTime,
   cancelToken,
+  primaryColor,
 }: SendBookingReminderParams) {
   if (!toEmail) return
+
+  const headerBg = primaryColor ?? "#2D6A4F"
 
   const dateLabel = startTime.toLocaleDateString("pt-BR", {
     weekday: "long", day: "numeric", month: "long", timeZone: "America/Sao_Paulo",
@@ -59,7 +63,7 @@ export async function sendBookingReminder({
 </head>
 <body style="margin:0;padding:16px;background:#f8fafc;" class="em-bg">
 <div style="font-family:-apple-system,sans-serif;max-width:480px;margin:0 auto;">
-  <div style="background:#2D6A4F;padding:20px;border-radius:12px 12px 0 0;">
+  <div style="background:${headerBg};padding:20px;border-radius:12px 12px 0 0;">
     <h1 style="color:#fff;font-size:18px;margin:0;">Seu agendamento é amanhã!</h1>
     <p style="color:rgba(255,255,255,0.8);font-size:13px;margin:4px 0 0;">${establishmentName}</p>
   </div>
@@ -85,7 +89,7 @@ export async function sendBookingReminder({
     <div class="em-cbox" style="background:#F9FAF8;border:1px solid #D1D5DB;border-radius:8px;padding:14px;text-align:center;margin-top:20px;">
       <p class="em-muted" style="font-size:11px;margin:0;color:#6B7280;">Código para cancelar</p>
       <p class="em-ccode" style="font-size:20px;font-weight:700;letter-spacing:0.15em;margin:4px 0;color:#1A1A2E;">${cancelToken}</p>
-      <a href="${cancelUrl}" class="em-clink" style="font-size:12px;color:#2D6A4F;font-weight:600;">
+      <a href="${cancelUrl}" class="em-clink" style="font-size:12px;color:${headerBg};font-weight:600;">
         Cancelar este agendamento
       </a>
     </div>
