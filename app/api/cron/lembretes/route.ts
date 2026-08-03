@@ -43,6 +43,7 @@ export async function GET(request: NextRequest) {
         serviceName: booking.service.name,
         startTime: booking.startTime,
         cancelToken: booking.cancelToken,
+        primaryColor: booking.establishment.primaryColor ?? undefined,
       })
       sent++
     } catch (error) {
