@@ -13,12 +13,16 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ error: "Não autorizado" }, { status: 401 })
   }
 
-  const now = new Date()
-  const tomorrowStart = new Date(now)
-  tomorrowStart.setUTCDate(tomorrowStart.getUTCDate() + 1)
-  tomorrowStart.setUTCHours(0, 0, 0, 0)
-  const tomorrowEnd = new Date(tomorrowStart)
-  tomorrowEnd.setUTCHours(23, 59, 59, 999)
+  // Calcula o início/fim do dia de amanhã em horário de Brasília (UTC-3),
+  // não em UTC — senão agendamentos entre 21h e 23h59 BRT caem na janela
+  // do dia errado.
+  const BRT_OFFSET_MS = 3 * 60 * 60 * 1000
+  const nowBrt = new Date(Date.now() - BRT_OFFSET_MS)
+  const tomorrowBrt = new Date(nowBrt)
+  tomorrowBrt.setUTCDate(tomorrowBrt.getUTCDate() + 1)
+  tomorrowBrt.setUTCHours(0, 0, 0, 0)
+  const tomorrowStart = new Date(tomorrowBrt.getTime() + BRT_OFFSET_MS)
+  const tomorrowEnd = new Date(tomorrowStart.getTime() + 24 * 60 * 60 * 1000 - 1)
 
   const bookings = await prisma.booking.findMany({
     where: {
