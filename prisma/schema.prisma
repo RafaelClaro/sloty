@@ -20,6 +20,7 @@ model Establishment {
   primaryLight   String?  @default("#D8F3DC")
   fontFamily     String?
   logoUrl        String?
+  serviceIcon    String?  @default("🩺")
   createdAt      DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
